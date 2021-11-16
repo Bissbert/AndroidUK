@@ -1,37 +1,37 @@
-TYPEID,TYPENAME
-0,Gebaeude
-1,Offenes Gebaeude
-2,Kapelle
-3,Sakrales Gebaeude
-4,Turm
-5,Erratischer Block
-6,Felsblock
-7,Quelle
-8,Grotte", Hoehle
-9,Wasserfall
-10,Denkmal
-11,Bildstock
-12,Brunnen
-13,Aussichtspunkt
-14,Landesgrenzstein
-15,Pass
-16,Gipfel
-17,Hauptgipfel
-18,Alpiner Gipfel
-19,Huegel
-20,Haupthuegel
-21,Felskopf
-22,Strassenpass
-23,Flurname swisstopo
-24,Lokalname swisstopo
-25,Haltestelle Schiff
-26,Haltestelle Bahn
-27,Uebrige Bahnen
-28,Haltestelle Bus
-29,Zollamt 24h 24h
-30,Zollamt 24h eingeschraenkt
-31,Zollamt eingeschraenkt
-32,Verladestation
-33,Ausfahrt
-34,Verzweigung
-35,Ein- und Ausfahrt
+"TYPEID","TYPENAME"
+"0","Gebaeude"
+"1","Offenes Gebaeude"
+"2","Kapelle"
+"3","Sakrales Gebaeude"
+"4","Turm"
+"5","Erratischer Block"
+"6","Felsblock"
+"7","Quelle"
+"8","Grotte, Hoehle"
+"9","Wasserfall"
+"10","Denkmal"
+"11","Bildstock"
+"12","Brunnen"
+"13","Aussichtspunkt"
+"14","Landesgrenzstein"
+"15","Pass"
+"16","Gipfel"
+"17","Hauptgipfel"
+"18","Alpiner Gipfel"
+"19","Huegel"
+"20","Haupthuegel"
+"21","Felskopf"
+"22","Strassenpass"
+"23","Flurname swisstopo"
+"24","Lokalname swisstopo"
+"25","Haltestelle Schiff"
+"26","Haltestelle Bahn"
+"27","Uebrige Bahnen"
+"28","Haltestelle Bus"
+"29","Zollamt 24h 24h"
+"30","Zollamt 24h eingeschraenkt"
+"31","Zollamt eingeschraenkt"
+"32","Verladestation"
+"33","Ausfahrt"
+"34","Verzweigung"
+"35","Ein- und Ausfahrt"
