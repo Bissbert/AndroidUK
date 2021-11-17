@@ -3,6 +3,7 @@ package ch.bissbert.peakseek;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import ch.bissbert.peakseek.objects.Sphere;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private float xpos = -1;
     private float ypos = -1;
 
-    private Object3D cube = null;
+    private Sphere sphere = null;
     private int fps = 0;
 
     private Light sun = null;
@@ -178,24 +179,16 @@ public class MainActivity extends AppCompatActivity {
                 sun = new Light(world);
                 sun.setIntensity(250, 250, 250);
 
-                // Create a texture out of the icon.png...:-)
-                Texture texture = new Texture(60, 60, RGBColor.WHITE);
-                TextureManager.getInstance().addTexture("texture", texture);
+                sphere = new Sphere(getResources());
 
-                cube = Primitives.getSphere(10);
-                //cube.calcTextureWrapSpherical();
-                cube.setTexture("texture");
-                cube.strip();
-                cube.build();
-
-                world.addObject(cube);
+                world.addObject(sphere);
 
                 Camera cam = world.getCamera();
                 cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
-                cam.lookAt(cube.getTransformedCenter());
+                cam.lookAt(sphere.getTransformedCenter());
 
                 SimpleVector sv = new SimpleVector();
-                sv.set(cube.getTransformedCenter());
+                sv.set(sphere.getTransformedCenter());
                 sv.y -= 100;
                 sv.z -= 100;
                 sun.setPosition(sv);
@@ -213,12 +206,12 @@ public class MainActivity extends AppCompatActivity {
 
         public void onDrawFrame(GL10 gl) {
             if (touchTurn != 0) {
-                cube.rotateY(touchTurn);
+                sphere.rotateY(touchTurn);
                 touchTurn = 0;
             }
 
             if (touchTurnUp != 0) {
-                cube.rotateX(touchTurnUp);
+                sphere.rotateX(touchTurnUp);
                 touchTurnUp = 0;
             }
 
