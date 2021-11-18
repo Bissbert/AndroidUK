@@ -5,7 +5,9 @@ import android.location.Location;
 
 import androidx.core.util.Pair;
 
-public class Point {
+import com.orm.SugarRecord;
+
+public class Point extends SugarRecord {
     private String name;
     private double altitude;
 
@@ -98,6 +100,14 @@ public class Point {
 
     public void setNorth(long north) {
         this.north = north;
+    }
+
+    public PointType getType() {
+        return type;
+    }
+
+    public void setType(PointType type) {
+        this.type = type;
     }
 
     /**

@@ -38,7 +38,7 @@ public class PointTest {
     private final double expLong;
     private final double expLat;
 
-    private static final PointType TYPE = new PointType(0, "Berg");
+    private static final PointType TYPE = new PointType("Berg");
 
     @Test
     public void testFromLV95() {

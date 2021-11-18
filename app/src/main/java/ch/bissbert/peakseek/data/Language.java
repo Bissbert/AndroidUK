@@ -1,9 +1,14 @@
 package ch.bissbert.peakseek.data;
 
-public class Language {
+import com.orm.SugarRecord;
+import com.orm.dsl.Column;
+
+public class Language extends SugarRecord {
     public static final Language NONE = new Language("NONE");
-    private int id;
     private String name;
+
+    @Column(name = "shortName", unique = true, notNull = true)
+    private String shortName;
 
     public Language(String name) {
         this.name = name;
@@ -12,12 +17,12 @@ public class Language {
     public Language() {
     }
 
-    public int getId() {
-        return id;
+    public Long getId() {
+        return super.getId();
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(long id) {
+        super.setId(id);
     }
 
     public String getName() {
@@ -26,6 +31,14 @@ public class Language {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
     }
 
     @Override

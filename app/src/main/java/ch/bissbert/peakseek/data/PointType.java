@@ -1,23 +1,23 @@
 package ch.bissbert.peakseek.data;
 
-public class PointType {
-    private int id;
+import com.orm.SugarRecord;
+
+public class PointType extends SugarRecord {
     private String name;
 
     public PointType() {
     }
 
-    public PointType(int id, String name) {
-        this.id = id;
+    public PointType(String name) {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
+    public Long getId() {
+        return super.getId();
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(Long id) {
+        super.setId(id);
     }
 
     public String getName() {
