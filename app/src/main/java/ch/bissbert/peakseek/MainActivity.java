@@ -6,6 +6,25 @@ import android.view.MotionEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.util.Log;
+
+import com.orm.SugarContext;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
+
+import ch.bissbert.peakseek.dao.LocationFetcher;
+import ch.bissbert.peakseek.dao.NoTimestampException;
+import ch.bissbert.peakseek.data.Point;
 import com.threed.jpct.Camera;
 import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Light;
@@ -38,6 +57,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static boolean run = false;
     // Used to handle pause and resume...
     private static MainActivity master = null;
 
@@ -58,6 +78,35 @@ public class MainActivity extends AppCompatActivity {
 
     private Light sun = null;
 
+    public MainActivity() {
+        super();
+    }
+
+    public void runOnce(){
+        if (!run) {
+            Log.i(getString(R.string.LOAD_TAG), "starting app");
+            Log.i(getString(R.string.LOAD_TAG), "query if network is available");
+            if (isNetworkAvailable()) {
+                Log.i(getString(R.string.LOAD_TAG), "fetching data...");
+                try {
+                    LocationFetcher locationFetcher = new LocationFetcher(this);
+                    locationFetcher.execute("");
+                } catch (ClassNotFoundException | SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            run = true;
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         Logger.log("onCreate");
@@ -67,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        SugarContext.init(this);
+        runOnce();
         mGLView = new GLSurfaceView(getApplication());
 
         mGLView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
@@ -234,5 +286,9 @@ public class MainActivity extends AppCompatActivity {
             }
             fps++;
         }
+      @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SugarContext.terminate();
     }
 }

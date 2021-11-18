@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="DB_URL">jdbc:mysql://bissbert.ch:3306/peakseek?useSSL=false</string>
+    <string name="DB_USER">peakuser</string>
+    <string name="DB_PASSWORD">to6zdDdSs9rdpEkKnjh</string>
+    <string name="DB_LAST_DATE_KEY">DB_LAST_DATE_KEY</string>
+    <string name="DB_SCHEMA" >peakseek</string>
+    <string name="DB_POINT_TABLE" >locations</string>
+</resources>
