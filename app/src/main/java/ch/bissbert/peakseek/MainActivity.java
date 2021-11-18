@@ -1,30 +1,18 @@
 package ch.bissbert.peakseek;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
-import android.util.Log;
-
 import com.orm.SugarContext;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.List;
-
-import ch.bissbert.peakseek.dao.LocationFetcher;
-import ch.bissbert.peakseek.dao.NoTimestampException;
-import ch.bissbert.peakseek.data.Point;
 import com.threed.jpct.Camera;
 import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Light;
@@ -39,11 +27,14 @@ import com.threed.jpct.World;
 import com.threed.jpct.util.MemoryHelper;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
+
+import ch.bissbert.peakseek.dao.LocationFetcher;
 
 /**
  * A simple demo. This shows more how to use jPCT-AE than it shows how to write
@@ -107,6 +98,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SugarContext.terminate();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         Logger.log("onCreate");
@@ -116,9 +113,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
         SugarContext.init(this);
         runOnce();
+
+        //mGLView = findViewById(R.id.peakSeekGLView);
+
         mGLView = new GLSurfaceView(getApplication());
 
         mGLView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
@@ -209,6 +209,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public void openSettingsMenu(View view) {
+    }
+
     class MyRenderer implements GLSurfaceView.Renderer {
 
         private long time = System.currentTimeMillis();
@@ -286,9 +289,5 @@ public class MainActivity extends AppCompatActivity {
             }
             fps++;
         }
-      @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SugarContext.terminate();
     }
 }
