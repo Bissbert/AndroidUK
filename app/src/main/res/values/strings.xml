@@ -8,4 +8,18 @@
     <string name="LANGUAGE_TABLE">language</string>
     <string name="TYPE_TABLE">types</string>
     <string name="MENU_DESCRIPTION">Menu</string>
+    <string name="settings_title">Settings</string>
+    <string name="COLOR_LABEL">Color</string>
+    <string name="back_arrow">back arrow</string>
+    <string name="COLOR_PREF_NAME">color-pref</string>
+    <string name="VIEW_DISTANCE_LABEL">Distance</string>
+    <string name="COLOR_PREF_MESSAGE">Choose the color used for the locations</string>
+    <string name="SAVE_COLOR_POSITIVE">Save Color</string>
+    <string name="CANCEL">cancel</string>
+    <string name="APP_PREFS">peakprefs</string>
+    <string name="DISTANCE_TYPE">Meter</string>
+    <string name="ERROR_LOGS_LABEL">Send error logs</string>
+    <string name="ERROR_LOGS_PREF">error_logs_enabled</string>
+    <string name="ABOUT">About</string>
+    <string name="RENDER_DISTANCE">render_distance</string>
 </resources>

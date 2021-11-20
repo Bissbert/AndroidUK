@@ -23,5 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SettingsActivity"
+            android:exported="true"></activity>
+        <activity android:name=".AboutActivity" android:exported="true"/>
     </application>
 </manifest>

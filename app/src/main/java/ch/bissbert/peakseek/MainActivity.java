@@ -1,6 +1,7 @@
 package ch.bissbert.peakseek;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.opengl.GLSurfaceView;
@@ -210,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openSettingsMenu(View view) {
+        Intent setting = new Intent(this, SettingsActivity.class);
+        startActivity(setting);
     }
 
     class MyRenderer implements GLSurfaceView.Renderer {
