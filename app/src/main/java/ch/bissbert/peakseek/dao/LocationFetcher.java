@@ -57,6 +57,11 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
     }
 
 
+    /**
+     * Will be executed in the background when the {@link #execute(Runnable)} method gets executed
+     * @param params params given
+     * @return an empty string
+     */
     @Override
     protected String doInBackground(String... params) {
         int newest;
@@ -296,6 +301,11 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         return 0;
     }
 
+    /**
+     * returns whether the current state of the data is the newest
+     * @return 0 if not loaded at all, 1 if no new data is available, 2 if new data is available
+     * @throws SQLException thrown when the request to the database goes wrong
+     */
     private int checkIfNewest() throws SQLException {
         Log.d(resources.getString(R.string.LOAD_TAG), "checking if newest data is saved");
         String lastDateAsString = preferences.getString(resources.getString(R.string.DB_LAST_DATE_KEY), null);
@@ -337,7 +347,7 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         return 1;
     }
 
-    public static List<Point> getPointsInRadius(int radiusInMeter, int north, int east, Connection connection) throws SQLException {
+    public static List<Point> getPointsInRadius(int radiusInMeter, int north, int east, Connection connection) {
 
         String query = "SELECT idLocations as id, name, east, north, height, type, language ,(SQRT(POW(east-?,2)+POW(north-?, 2))) as distance\n" +
                 "FROM Point\n" +
@@ -345,7 +355,7 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
                 "HAVING distance <= ? AND distance > 0\n" +
                 "ORDER BY distance";
 
-        List<Point> points = Point.findWithQuery(Point.class, query);
+        List<Point> points = Point.findWithQuery(Point.class, query, String.valueOf(east), String.valueOf(north), String.valueOf(radiusInMeter));
 
         /*try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, east);
