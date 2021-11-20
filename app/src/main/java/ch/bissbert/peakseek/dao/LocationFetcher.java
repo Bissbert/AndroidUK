@@ -126,12 +126,12 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         try (PreparedStatement statement = connection.prepareStatement(fetchStatement, ResultSet.TYPE_FORWARD_ONLY)) {
             Point.deleteAll(Point.class);
             ProgressBar progressBar = createDialog();
-            //progressBar.setMax(size);
+            progressBar.setMax(size);
             try (ResultSet resultSet = statement.executeQuery()) {
                 resultSet.setFetchSize(resources.getInteger(R.integer.FETCH_SIZE));
                 while (resultSet.next()) {
                     Point.save(createPoint(resultSet));
-                    //progressBar.incrementProgressBy(1);
+                    progressBar.incrementProgressBy(1);
                     Log.d(resources.getString(R.string.LOAD_TAG), "current row: " + resultSet.getRow());
                 }
             }
@@ -222,7 +222,7 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
 
         dialog = builder.create();
         dialog.show();
-        return context.findViewById(R.id.loader);
+        return dialog.findViewById(R.id.loader);
     }
 
     /**
@@ -338,17 +338,16 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
     }
 
     public static List<Point> getPointsInRadius(int radiusInMeter, int north, int east, Connection connection) throws SQLException {
-        //todo implement for working with sugar
 
         String query = "SELECT idLocations as id, name, east, north, height, type, language ,(SQRT(POW(east-?,2)+POW(north-?, 2))) as distance\n" +
-                "FROM peakseek.locations\n" +
+                "FROM Point\n" +
                 "WHERE " + pointTypeOrQuery() + "\n" +
                 "HAVING distance <= ? AND distance > 0\n" +
                 "ORDER BY distance";
 
-        List<Point> points = new ArrayList<>();
+        List<Point> points = Point.findWithQuery(Point.class, query);
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        /*try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, east);
             statement.setLong(2, north);
             statement.setInt(3, radiusInMeter);
@@ -357,7 +356,7 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
                     points.add(createPoint(resultSet));
                 }
             }
-        }
+        }*/
         return points;
     }
 }
