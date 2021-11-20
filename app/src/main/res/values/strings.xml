@@ -22,4 +22,10 @@
     <string name="ERROR_LOGS_PREF">error_logs_enabled</string>
     <string name="ABOUT">About</string>
     <string name="RENDER_DISTANCE">render_distance</string>
+    <string name="WHO_TITLE">Who are we?</string>
+    <string name="WHO_CREATORS">We are just some nature and mountain enthusiasts</string>
+    <string name="CODE_BY_TITLE">Code by</string>
+    <string name="CODE_CREATORS">Bissbert, BeeTheKay</string>
+    <string name="DESIGN_BY_TITLE">Design by</string>
+    <string name="DESIGN_CREATORS">pages &amp; BE: Bissbert\nMain Screen: BeeTheKay</string>
 </resources>
