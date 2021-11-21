@@ -3,6 +3,11 @@ package ch.bissbert.peakseek.data;
 import com.orm.SugarRecord;
 import com.orm.dsl.Column;
 
+/**
+ * Language object with a long and a short name
+ *
+ * @author bissbert
+ */
 public class Language extends SugarRecord {
     public static final Language NONE = new Language("NONE");
     private String name;

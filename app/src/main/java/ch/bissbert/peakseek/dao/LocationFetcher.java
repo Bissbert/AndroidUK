@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.util.Log;
@@ -347,7 +348,14 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         return 1;
     }
 
-    public static List<Point> getPointsInRadius(int radiusInMeter, int north, int east, Connection connection) {
+    /**
+     * fetches the points in the vicinity of the given points by a radius
+     * @param radiusInMeter the radius of points in meter
+     * @param north north in the swiss LV95 coordinate system
+     * @param east east in the swiss LV95 coordinate system
+     * @return list of Points fetched
+     */
+    public static List<Point> getPointsInRadius(int radiusInMeter, int north, int east) {
 
         String query = "SELECT idLocations as id, name, east, north, height, type, language ,(SQRT(POW(east-?,2)+POW(north-?, 2))) as distance\n" +
                 "FROM Point\n" +
@@ -368,5 +376,10 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
             }
         }*/
         return points;
+    }
+
+    public List<Point> getPointsInRadius(Location location, int radiusInMeter){
+        double[] pos = Point.wgs84ToLV95(location.getLongitude(), location.getLatitude(), location.getAltitude());
+        return getPointsInRadius(radiusInMeter, (int)pos[0], (int)pos[1]);
     }
 }
