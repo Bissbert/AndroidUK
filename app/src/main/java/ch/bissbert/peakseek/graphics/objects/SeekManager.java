@@ -1,6 +1,7 @@
 package ch.bissbert.peakseek.graphics.objects;
 
 import android.content.res.Resources;
+import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
@@ -23,6 +24,10 @@ public class SeekManager {
     private final Resources resources;
     private final GLSurfaceView mGLView;
     private final MainActivity activity;
+    private MyRenderer renderer = null;
+    private FrameBuffer fb = null;
+    private World world = null;
+    private RGBColor backgroundColor = new RGBColor(0,0,0,0);
 
     private MyRenderer renderer;
 
@@ -44,9 +49,11 @@ public class SeekManager {
      * loads the seek screen onto the GLSurface view from the main screen
      */
     public void loadSeekScreen() {
+        mGLView.setZOrderOnTop(true);
 
-        mGLView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        mGLView.setEGLConfigChooser(8,8,8,8,16,0);
 
+        mGLView.getHolder().setFormat(PixelFormat.RGBA_8888);
         renderer = new MyRenderer();
         mGLView.setRenderer(renderer);
     }
@@ -108,6 +115,7 @@ public class SeekManager {
 
         public void onDrawFrame(GL10 gl) {
             fb.clear(BACKGROUND_COLOR);
+
             world.renderScene(fb);
             world.draw(fb);
             fb.display();

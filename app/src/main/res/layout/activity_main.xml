@@ -7,8 +7,10 @@
     tools:context=".MainActivity">
 
     <androidx.camera.view.PreviewView
+        android:id="@+id/cameraView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:ignore="MissingConstraints" />
 
     <android.opengl.GLSurfaceView
         android:id="@+id/peakSeekGLView"
