@@ -2,6 +2,7 @@ package ch.bissbert.peakseek;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 /**
  * manager for {@link SharedPreferences} in this application.
@@ -36,6 +37,7 @@ public final class SharedPreferenceManager {
      * @param color color in {@link androidx.annotation.ColorInt} format
      */
     public void setColor(int color) {
+        Log.i(context.getString(R.string.PREF_MANAGER_TAG), "saving color: " + color);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(context.getString(R.string.COLOR_PREF_NAME), color);
         editor.apply();
@@ -47,6 +49,7 @@ public final class SharedPreferenceManager {
      * @param isEnabled whether the collection of error data is allowed
      */
     public void setErrorEnabled(boolean isEnabled) {
+        Log.i(context.getString(R.string.PREF_MANAGER_TAG), "saving whether error messages are enabled: " + isEnabled);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(context.getString(R.string.ERROR_LOGS_PREF), isEnabled);
         editor.apply();
@@ -67,6 +70,7 @@ public final class SharedPreferenceManager {
      * @param distanceInMeter distance to render in meter
      */
     public void setDistance(int distanceInMeter) {
+        Log.i(context.getString(R.string.PREF_MANAGER_TAG), "setting load distance(m): " + distanceInMeter);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(context.getString(R.string.RENDER_DISTANCE), distanceInMeter);
         editor.apply();
