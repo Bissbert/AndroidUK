@@ -35,6 +35,8 @@ public class SeekManager {
     private Sphere sphere = null;
     private int fps = 0;
 
+    private Camera cam;
+
     private Light sun = null;
 
     public SeekManager(Resources resources, GLSurfaceView mGLView) {
@@ -47,19 +49,6 @@ public class SeekManager {
      */
     public void loadSeekScreen() {
 
-        //mGLView = new GLSurfaceView(getApplication());
-
-        /*mGLView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
-            public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-                // Ensure that we get a 16bit framebuffer. Otherwise, we'll fall
-                // back to Pixelflinger on some device (read: Samsung I7500)
-                int[] attributes = new int[]{EGL10.EGL_DEPTH_SIZE, 16, EGL10.EGL_NONE};
-                EGLConfig[] configs = new EGLConfig[1];
-                int[] result = new int[1];
-                egl.eglChooseConfig(display, attributes, configs, 1, result);
-                return configs[0];
-            }
-        });*/
         mGLView.setZOrderOnTop(true);
 
         mGLView.setEGLConfigChooser(8,8,8,8,16,0);
@@ -114,6 +103,8 @@ public class SeekManager {
 
             touchTurn = xd / -100f;
             touchTurnUp = yd / -100f;
+
+            camMovementSpeed();
             return true;
         }
 
@@ -124,6 +115,11 @@ public class SeekManager {
         }
 
         return false;
+    }
+
+    private void camMovementSpeed() {
+        touchTurnUp /= 10;
+        touchTurn /= 10;
     }
 
     class MyRenderer implements GLSurfaceView.Renderer {
@@ -150,7 +146,7 @@ public class SeekManager {
 
             world.addObject(sphere);
 
-            Camera cam = world.getCamera();
+            cam = world.getCamera();
             cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
             cam.lookAt(sphere.getTransformedCenter());
 
@@ -167,12 +163,12 @@ public class SeekManager {
 
         public void onDrawFrame(GL10 gl) {
             if (touchTurn != 0) {
-                sphere.rotateY(touchTurn);
+                cam.rotateY(touchTurn);
                 touchTurn = 0;
             }
 
             if (touchTurnUp != 0) {
-                sphere.rotateX(touchTurnUp);
+                cam.rotateX(touchTurnUp);
                 touchTurnUp = 0;
             }
 
