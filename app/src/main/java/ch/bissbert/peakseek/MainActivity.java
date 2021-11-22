@@ -1,12 +1,20 @@
 package ch.bissbert.peakseek;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import ch.bissbert.peakseek.objects.Sphere;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.orm.SugarContext;
 import com.threed.jpct.Camera;
 import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Light;
@@ -21,11 +29,14 @@ import com.threed.jpct.World;
 import com.threed.jpct.util.MemoryHelper;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
+
+import ch.bissbert.peakseek.dao.LocationFetcher;
 
 /**
  * A simple demo. This shows more how to use jPCT-AE than it shows how to write
@@ -39,6 +50,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static boolean run = false;
     // Used to handle pause and resume...
     private static MainActivity master = null;
 
@@ -59,6 +71,41 @@ public class MainActivity extends AppCompatActivity {
 
     private Light sun = null;
 
+    public MainActivity() {
+        super();
+    }
+
+    public void runOnce(){
+        if (!run) {
+            Log.i(getString(R.string.LOAD_TAG), "starting app");
+            Log.i(getString(R.string.LOAD_TAG), "query if network is available");
+            if (isNetworkAvailable()) {
+                Log.i(getString(R.string.LOAD_TAG), "fetching data...");
+                try {
+                    LocationFetcher locationFetcher = new LocationFetcher(this);
+                    locationFetcher.execute("");
+                } catch (ClassNotFoundException | SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            run = true;
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SugarContext.terminate();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         Logger.log("onCreate");
@@ -68,6 +115,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
+        //setContentView(R.layout.activity_main);
+        SugarContext.init(this);
+        runOnce();
+
+        //mGLView = findViewById(R.id.peakSeekGLView);
+
         mGLView = new GLSurfaceView(getApplication());
 
         mGLView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
@@ -156,6 +209,11 @@ public class MainActivity extends AppCompatActivity {
 
     protected boolean isFullscreenOpaque() {
         return true;
+    }
+
+    public void openSettingsMenu(View view) {
+        Intent setting = new Intent(this, SettingsActivity.class);
+        startActivity(setting);
     }
 
     class MyRenderer implements GLSurfaceView.Renderer {

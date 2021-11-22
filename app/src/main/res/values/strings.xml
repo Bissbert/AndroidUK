@@ -1,3 +1,31 @@
 <resources>
     <string name="app_name">PeakSeek</string>
+    <string name="FETCHNEW_TITLE">Update data</string>
+    <string name="FETCHNEW_MESSAGE">Do you want to fetch the new data?\nWill ask on next start again.</string>
+    <string name="LOAD_MESSAGE">We are loading the point data please wait for a moment…</string>
+    <string name="LOAD_TITLE">loading data</string>
+    <string name="LOAD_TAG">Load data from DB</string>
+    <string name="LANGUAGE_TABLE">language</string>
+    <string name="TYPE_TABLE">types</string>
+    <string name="MENU_DESCRIPTION">Menu</string>
+    <string name="settings_title">Settings</string>
+    <string name="COLOR_LABEL">Color</string>
+    <string name="back_arrow">back arrow</string>
+    <string name="COLOR_PREF_NAME">color-pref</string>
+    <string name="VIEW_DISTANCE_LABEL">Distance</string>
+    <string name="COLOR_PREF_MESSAGE">Choose the color used for the locations</string>
+    <string name="SAVE_COLOR_POSITIVE">Save Color</string>
+    <string name="CANCEL">cancel</string>
+    <string name="APP_PREFS">peakprefs</string>
+    <string name="DISTANCE_TYPE">Meter</string>
+    <string name="ERROR_LOGS_LABEL">Send error logs</string>
+    <string name="ERROR_LOGS_PREF">error_logs_enabled</string>
+    <string name="ABOUT">About</string>
+    <string name="RENDER_DISTANCE">render_distance</string>
+    <string name="WHO_TITLE">Who are we?</string>
+    <string name="WHO_CREATORS">We are just some nature and mountain enthusiasts</string>
+    <string name="CODE_BY_TITLE">Code by</string>
+    <string name="CODE_CREATORS">Bissbert, BeeTheKay</string>
+    <string name="DESIGN_BY_TITLE">Design by</string>
+    <string name="DESIGN_CREATORS">pages &amp; BE: Bissbert\nMain Screen: BeeTheKay</string>
 </resources>
