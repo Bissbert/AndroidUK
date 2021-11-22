@@ -27,12 +27,6 @@ public class SeekManager {
     private MyRenderer renderer = null;
     private FrameBuffer fb = null;
     private World world = null;
-    private RGBColor backgroundColor = new RGBColor(0,0,0,0);
-
-    private MyRenderer renderer;
-
-    private FrameBuffer fb = null;
-    private World world = null;
     private final RGBColor BACKGROUND_COLOR = new RGBColor(50, 50, 100);
 
     private int fps = 0;
