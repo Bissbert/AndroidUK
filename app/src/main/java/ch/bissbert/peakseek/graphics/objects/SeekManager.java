@@ -1,18 +1,26 @@
 package ch.bissbert.peakseek.graphics.objects;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
+import android.location.LocationManager;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import androidx.core.app.ActivityCompat;
+
 import com.threed.jpct.Camera;
 import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Light;
+import com.threed.jpct.Object3D;
 import com.threed.jpct.RGBColor;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.World;
 import com.threed.jpct.util.MemoryHelper;
+
+import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -24,7 +32,7 @@ public class SeekManager {
     private MyRenderer renderer = null;
     private FrameBuffer fb = null;
     private World world = null;
-    private RGBColor backgroundColor = new RGBColor(0,0,0,0);
+    private RGBColor backgroundColor = new RGBColor(0, 0, 0, 0);
 
     private float touchTurn = 0;
     private float touchTurnUp = 0;
@@ -51,7 +59,7 @@ public class SeekManager {
 
         mGLView.setZOrderOnTop(true);
 
-        mGLView.setEGLConfigChooser(8,8,8,8,16,0);
+        mGLView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 
         mGLView.getHolder().setFormat(PixelFormat.RGBA_8888);
 
@@ -75,6 +83,7 @@ public class SeekManager {
 
     /**
      * triggered when screen gets touched
+     *
      * @param me the {@link MotionEvent} containing the motion on the screen
      * @return a boolean whether succeeded
      */
@@ -122,9 +131,23 @@ public class SeekManager {
         touchTurn /= 10;
     }
 
+    public void setSpheres(List<Sphere> spheres) {
+        if (world == null) return;
+        Sphere[] sphereArray = new Sphere[spheres.size()];
+        spheres.toArray(sphereArray);
+        world.removeAllObjects();
+        System.out.println("Spheres: "+spheres.toString());
+        world.addObjects(sphereArray);
+        /*for (Sphere sphere : spheres) {
+            world.addObject(sphere);
+            Log.d("setting spheres", "render sphere: " + sphere);
+        }*/
+    }
+
     class MyRenderer implements GLSurfaceView.Renderer {
 
         private long time = System.currentTimeMillis();
+        private boolean firstTriggerHappened;
 
         public MyRenderer() {
         }
@@ -159,6 +182,12 @@ public class SeekManager {
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            /*if (SeekManager.this.sphereManager != null && SeekManager.this.locationManager != null && !firstTriggerHappened) {
+                firstTriggerHappened = true;
+                if (ActivityCompat.checkSelfPermission(SeekManager.this.mGLView.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(SeekManager.this.mGLView.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    sphereManager.onLocationChanged(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                }
+            }*/
         }
 
         public void onDrawFrame(GL10 gl) {

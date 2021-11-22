@@ -53,4 +53,13 @@ public class Sphere extends Object3D {
     private int getFacesAmount() {
         return resources.getInteger(R.integer.amount_of_faces);
     }
+
+    @Override
+    public String toString() {
+        return "Sphere{" +
+                "x=" + getTranslation().x + ", " +
+                "y=" + getTranslation().y + ", " +
+                "x=" + getTranslation().z +
+                '}';
+    }
 }

@@ -356,13 +356,14 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
      */
     public static List<Point> getPointsInRadius(int radiusInMeter, int north, int east) {
 
-        String query = "SELECT idLocations as id, name, east, north, height, type, language ,(SQRT(POW(east-?,2)+POW(north-?, 2))) as distance\n" +
+        String query = "SELECT id, name, east, north, altitude, type, language ,((east-?)*(east-?)+(north-?)*(north-?)) as distance\n" +
                 "FROM Point\n" +
                 "WHERE " + pointTypeOrQuery() + "\n" +
-                "HAVING distance <= ? AND distance > 0\n" +
+                "GROUP BY distance\n"+
+                "HAVING distance <= (? * ?) AND distance > 0\n" +
                 "ORDER BY distance";
-
-        List<Point> points = Point.findWithQuery(Point.class, query, String.valueOf(east), String.valueOf(north), String.valueOf(radiusInMeter));
+        Log.d("Loading Points", "rad = '"+radiusInMeter+"',  north = '"+north+"', east = '"+east+"'");
+        List<Point> points = Point.findWithQuery(Point.class, query, String.valueOf(east), String.valueOf(east), String.valueOf(north), String.valueOf(north), String.valueOf(radiusInMeter), String.valueOf(radiusInMeter));
 
         /*try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, east);
@@ -377,8 +378,8 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         return points;
     }
 
-    public List<Point> getPointsInRadius(Location location, int radiusInMeter){
+    public static List<Point> getPointsInRadius(Location location, int radiusInMeter){
         double[] pos = Point.wgs84ToLV95(location.getLongitude(), location.getLatitude(), location.getAltitude());
-        return getPointsInRadius(radiusInMeter, (int)pos[0], (int)pos[1]);
+        return getPointsInRadius(radiusInMeter, (int)pos[1], (int)pos[0]);
     }
 }
