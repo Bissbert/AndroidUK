@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import ch.bissbert.peakseek.dao.LocationFetcher;
+import ch.bissbert.peakseek.graphics.rotation.Orientation;
 
 /**
  * Main activity containing the find screen as well as the button to switch to the settings menu
@@ -29,7 +30,7 @@ import ch.bissbert.peakseek.dao.LocationFetcher;
  * @author Bissbert, BeeTheKay
  * @see SettingsActivity
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Orientation.Listener {
 
     private SeekManager seekManager;
 
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
      * Loads the data from the database if first time open or else asks if to load when new data is available
      */
     public void runOnce() {
+
         if (!run) {
             Log.i(getString(R.string.LOAD_TAG), "starting app");
             Log.i(getString(R.string.LOAD_TAG), "query if network is available");
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void loadSeekScreen() {
         GLSurfaceView surfaceView = findViewById(R.id.peakSeekGLView);
-        seekManager = new SeekManager(getResources(), surfaceView);
+        seekManager = new SeekManager(getResources(), surfaceView, this);
         seekManager.loadSeekScreen();
     }
 
@@ -137,13 +139,18 @@ public class MainActivity extends AppCompatActivity {
         seekManager.onResume();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
     /**
      * triggered when screen gets touched
      * @param me the {@link MotionEvent} containing the motion on the screen
      * @return a boolean whether succeeded
      */
     public boolean onTouchEvent(MotionEvent me) {
-        return seekManager.onTouchEvent(me) || super.onTouchEvent(me);
+        return super.onTouchEvent(me);
     }
 
     /**
@@ -153,5 +160,11 @@ public class MainActivity extends AppCompatActivity {
     public void openSettingsMenu(View view) {
         Intent setting = new Intent(this, SettingsActivity.class);
         startActivity(setting);
+    }
+
+
+    @Override
+    public void onOrientationChanged(float yaw, float pitch) {
+        seekManager.onOrientationChanged(yaw, pitch);
     }
 }
