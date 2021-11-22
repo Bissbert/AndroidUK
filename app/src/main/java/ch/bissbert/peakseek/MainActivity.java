@@ -1,27 +1,29 @@
 package ch.bissbert.peakseek;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-
-import ch.bissbert.peakseek.graphics.objects.SeekManager;
-
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.orm.SugarContext;
 import com.threed.jpct.Logger;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import ch.bissbert.peakseek.dao.LocationFetcher;
+import ch.bissbert.peakseek.graphics.objects.SeekManager;
 
 /**
  * Main activity containing the find screen as well as the button to switch to the settings menu
@@ -29,7 +31,7 @@ import ch.bissbert.peakseek.dao.LocationFetcher;
  * @author Bissbert, BeeTheKay
  * @see SettingsActivity
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LifecycleOwner {
 
     private SeekManager seekManager;
 
@@ -37,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     // Used to handle pause and resume...
     private static MainActivity master = null;
 
+    private CameraManager cameraManager;
+    private final int REQUEST_CODE_PERMISSIONS = 1001;
+    private final String[] permissions = {android.Manifest.permission.CAMERA};
 
 
     public MainActivity() {
@@ -105,8 +110,24 @@ public class MainActivity extends AppCompatActivity {
         SugarContext.init(this);
         runOnce();
 
+        if (hasNoPermissions()){
+            requestPermission();
+        }
+
+        cameraManager = new CameraManager(this, findViewById(R.id.cameraView));
+        cameraManager.onCreate();
+
         if (seekManager == null) loadSeekScreen();
 
+    }
+
+    private boolean hasNoPermissions(){
+        return ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission(){
+        ActivityCompat.requestPermissions(this, permissions,REQUEST_CODE_PERMISSIONS);
     }
 
     /**
@@ -125,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         seekManager.onPause();
+        //cameraManager.onPause();
     }
 
     /**
@@ -135,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (seekManager == null) loadSeekScreen();
         seekManager.onResume();
+        //cameraManager.onResume();
     }
 
     /**
