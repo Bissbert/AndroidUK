@@ -1,6 +1,7 @@
 package ch.bissbert.peakseek.graphics.objects;
 
 import android.content.res.Resources;
+import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -23,7 +24,7 @@ public class SeekManager {
     private MyRenderer renderer = null;
     private FrameBuffer fb = null;
     private World world = null;
-    private RGBColor back = new RGBColor(50, 50, 100);
+    private RGBColor backgroundColor = new RGBColor(0,0,0,0);
 
     private float touchTurn = 0;
     private float touchTurnUp = 0;
@@ -48,8 +49,11 @@ public class SeekManager {
      */
     public void loadSeekScreen() {
 
+        mGLView.setZOrderOnTop(true);
 
-        mGLView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        mGLView.setEGLConfigChooser(8,8,8,8,16,0);
+
+        mGLView.getHolder().setFormat(PixelFormat.RGBA_8888);
 
         renderer = new MyRenderer();
         mGLView.setRenderer(renderer);
@@ -168,7 +172,7 @@ public class SeekManager {
                 touchTurnUp = 0;
             }
 
-            fb.clear(back);
+            fb.clear(backgroundColor);
             world.renderScene(fb);
             world.draw(fb);
             fb.display();
