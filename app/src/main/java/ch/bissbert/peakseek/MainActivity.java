@@ -39,14 +39,10 @@ import javax.microedition.khronos.opengles.GL10;
 import ch.bissbert.peakseek.dao.LocationFetcher;
 
 /**
- * A simple demo. This shows more how to use jPCT-AE than it shows how to write
- * a proper application for Android. It includes basic activity management to
- * handle pause and resume...
+ * Main activity containing the find screen as well as the button to switch to the settings menu
  *
- * @author EgonOlsen
- *
- * @source https://www.jpct.net/wiki/index.php?title=Main_Page#How_to_start_2
- *
+ * @author Bissbert, BeeTheKay
+ * @see SettingsActivity
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -75,7 +71,12 @@ public class MainActivity extends AppCompatActivity {
         super();
     }
 
-    public void runOnce(){
+    /**
+     * method that only runs once per app start.
+     * <p>
+     * Loads the data from the database if first time open or else asks if to load when new data is available
+     */
+    public void runOnce() {
         if (!run) {
             Log.i(getString(R.string.LOAD_TAG), "starting app");
             Log.i(getString(R.string.LOAD_TAG), "query if network is available");
@@ -92,6 +93,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * checks whether an internet connection is available.
+     * <p>
+     * needed to check if connections to database can be made
+     *
+     * @return whether device is connected to internet
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -99,12 +107,22 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    /**
+     * on closing of app/screen closes the current SugarContext
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         SugarContext.terminate();
     }
 
+    /**
+     * run on creation of app
+     *
+     * sets activity as main activity and loads the screen. Also loads the database({@link #runOnce()}),
+     * initiates the SugarContext and loads the seekScreen({@link #loadSeekScreen()})
+     * @param savedInstanceState instance of saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -115,19 +133,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         SugarContext.init(this);
         runOnce();
 
-        //mGLView = findViewById(R.id.peakSeekGLView);
+        loadSeekScreen();
 
-        mGLView = new GLSurfaceView(getApplication());
+    }
+
+    /**
+     * loads the seek screen onto the GLSurface view from the main screen
+     */
+    private void loadSeekScreen() {
+        mGLView = findViewById(R.id.peakSeekGLView);
+
+        //mGLView = new GLSurfaceView(getApplication());
 
         mGLView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
             public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
                 // Ensure that we get a 16bit framebuffer. Otherwise, we'll fall
                 // back to Pixelflinger on some device (read: Samsung I7500)
-                int[] attributes = new int[] { EGL10.EGL_DEPTH_SIZE, 16, EGL10.EGL_NONE };
+                int[] attributes = new int[]{EGL10.EGL_DEPTH_SIZE, 16, EGL10.EGL_NONE};
                 EGLConfig[] configs = new EGLConfig[1];
                 int[] result = new int[1];
                 egl.eglChooseConfig(display, attributes, configs, 1, result);
@@ -137,26 +163,30 @@ public class MainActivity extends AppCompatActivity {
 
         renderer = new MyRenderer();
         mGLView.setRenderer(renderer);
-        setContentView(mGLView);
     }
 
+    /**
+     * pauses the GLView
+     */
     @Override
     protected void onPause() {
         super.onPause();
         mGLView.onPause();
     }
 
+    /**
+     * resumes the GLView
+     */
     @Override
     protected void onResume() {
         super.onResume();
         mGLView.onResume();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
+    /**
+     * copys fields from object given //TODO @BeeTheKey please write an explanation to this method
+     * @param src object of which the fields should be copied
+     */
     private void copy(Object src) {
         try {
             Logger.log("Copying data from master Activity!");
@@ -170,6 +200,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * triggered when screen gets touched
+     * @param me the {@link MotionEvent} containing the motion on the screen
+     * @return a boolean whether succeeded
+     */
     public boolean onTouchEvent(MotionEvent me) {
 
         if (me.getAction() == MotionEvent.ACTION_DOWN) {
@@ -207,10 +242,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onTouchEvent(me);
     }
 
+    //TODO @BeeTheKay write a description
     protected boolean isFullscreenOpaque() {
         return true;
     }
 
+    /**
+     * opens the Settings menu using an intent
+     * @param view button that triggered the method
+     */
     public void openSettingsMenu(View view) {
         Intent setting = new Intent(this, SettingsActivity.class);
         startActivity(setting);

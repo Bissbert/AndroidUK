@@ -2,6 +2,11 @@ package ch.bissbert.peakseek.data;
 
 import com.orm.SugarRecord;
 
+/**
+ * Type of Point with a name
+ *
+ * @author Bissbert
+ */
 public class PointType extends SugarRecord {
     private String name;
 

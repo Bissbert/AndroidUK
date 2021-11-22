@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.util.Log;
@@ -57,6 +58,11 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
     }
 
 
+    /**
+     * Will be executed in the background when the {@link #execute(Runnable)} method gets executed
+     * @param params params given
+     * @return an empty string
+     */
     @Override
     protected String doInBackground(String... params) {
         int newest;
@@ -126,12 +132,12 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         try (PreparedStatement statement = connection.prepareStatement(fetchStatement, ResultSet.TYPE_FORWARD_ONLY)) {
             Point.deleteAll(Point.class);
             ProgressBar progressBar = createDialog();
-            //progressBar.setMax(size);
+            progressBar.setMax(size);
             try (ResultSet resultSet = statement.executeQuery()) {
                 resultSet.setFetchSize(resources.getInteger(R.integer.FETCH_SIZE));
                 while (resultSet.next()) {
                     Point.save(createPoint(resultSet));
-                    //progressBar.incrementProgressBy(1);
+                    progressBar.incrementProgressBy(1);
                     Log.d(resources.getString(R.string.LOAD_TAG), "current row: " + resultSet.getRow());
                 }
             }
@@ -222,7 +228,7 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
 
         dialog = builder.create();
         dialog.show();
-        return context.findViewById(R.id.loader);
+        return dialog.findViewById(R.id.loader);
     }
 
     /**
@@ -296,6 +302,11 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         return 0;
     }
 
+    /**
+     * returns whether the current state of the data is the newest
+     * @return 0 if not loaded at all, 1 if no new data is available, 2 if new data is available
+     * @throws SQLException thrown when the request to the database goes wrong
+     */
     private int checkIfNewest() throws SQLException {
         Log.d(resources.getString(R.string.LOAD_TAG), "checking if newest data is saved");
         String lastDateAsString = preferences.getString(resources.getString(R.string.DB_LAST_DATE_KEY), null);
@@ -337,18 +348,24 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         return 1;
     }
 
-    public static List<Point> getPointsInRadius(int radiusInMeter, int north, int east, Connection connection) throws SQLException {
-        //todo implement for working with sugar
+    /**
+     * fetches the points in the vicinity of the given points by a radius
+     * @param radiusInMeter the radius of points in meter
+     * @param north north in the swiss LV95 coordinate system
+     * @param east east in the swiss LV95 coordinate system
+     * @return list of Points fetched
+     */
+    public static List<Point> getPointsInRadius(int radiusInMeter, int north, int east) {
 
         String query = "SELECT idLocations as id, name, east, north, height, type, language ,(SQRT(POW(east-?,2)+POW(north-?, 2))) as distance\n" +
-                "FROM peakseek.locations\n" +
+                "FROM Point\n" +
                 "WHERE " + pointTypeOrQuery() + "\n" +
                 "HAVING distance <= ? AND distance > 0\n" +
                 "ORDER BY distance";
 
-        List<Point> points = new ArrayList<>();
+        List<Point> points = Point.findWithQuery(Point.class, query, String.valueOf(east), String.valueOf(north), String.valueOf(radiusInMeter));
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        /*try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, east);
             statement.setLong(2, north);
             statement.setInt(3, radiusInMeter);
@@ -357,7 +374,12 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
                     points.add(createPoint(resultSet));
                 }
             }
-        }
+        }*/
         return points;
+    }
+
+    public List<Point> getPointsInRadius(Location location, int radiusInMeter){
+        double[] pos = Point.wgs84ToLV95(location.getLongitude(), location.getLatitude(), location.getAltitude());
+        return getPointsInRadius(radiusInMeter, (int)pos[0], (int)pos[1]);
     }
 }
