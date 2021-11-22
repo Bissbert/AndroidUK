@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer name="amount_of_faces">60</integer>
+    <integer name="size_of_sphere">10</integer>
     <integer name="FETCH_SIZE">250</integer>
     <integer name="DEFAULT_RENDER_DISTANCE">1000</integer>
 </resources>
