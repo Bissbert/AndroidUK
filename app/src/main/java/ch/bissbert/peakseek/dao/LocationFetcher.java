@@ -34,7 +34,7 @@ import ch.bissbert.peakseek.data.PointType;
 /**
  * This class fetches the new Point data from the database if there is some new or if its the first time the app gets opened
  *
- * @author fabian
+ * @author Bissbert
  */
 public class LocationFetcher extends AsyncTask<String, Void, String> {
     private Connection connection;
@@ -65,6 +65,7 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
      */
     @Override
     protected String doInBackground(String... params) {
+        Looper.prepare();
         int newest;
         try {
             String dbUrl = resources.getString(R.string.DB_URL);

@@ -1,4 +1,4 @@
-package ch.bissbert.peakseek.objects;
+package ch.bissbert.peakseek.graphics.objects;
 
 import android.content.res.Resources;
 
