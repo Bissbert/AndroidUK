@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <androidx.camera.view.PreviewView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <android.opengl.GLSurfaceView
         android:id="@+id/peakSeekGLView"
         android:layout_width="match_parent"
@@ -17,14 +21,13 @@
         android:contentDescription="@string/MENU_DESCRIPTION"
         android:minWidth="48dp"
         android:minHeight="48dp"
+        android:onClick="openSettingsMenu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.952"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.022"
-        app:srcCompat="@drawable/menubutton"
-        android:onClick="openSettingsMenu"
-        />
+        app:srcCompat="@drawable/menubutton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
