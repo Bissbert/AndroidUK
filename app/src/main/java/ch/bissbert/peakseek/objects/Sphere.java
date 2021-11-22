@@ -1,13 +1,7 @@
 package ch.bissbert.peakseek.objects;
 
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.util.Log;
 
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
-
-import com.threed.jpct.Logger;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.Primitives;
 import com.threed.jpct.RGBColor;
