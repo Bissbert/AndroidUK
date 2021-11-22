@@ -37,6 +37,7 @@ public class ViewRotation {
     }
 
     public void onOrientationChanged(float yaw, float pitch) {
+        if (camera == null) return;
         camera.lookAt(new SimpleVector(-yaw, -pitch, 0));
     }
 
