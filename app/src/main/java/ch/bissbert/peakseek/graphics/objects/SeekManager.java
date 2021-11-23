@@ -3,7 +3,6 @@ package ch.bissbert.peakseek.graphics.objects;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
-import android.util.Log;
 
 import com.threed.jpct.Camera;
 import com.threed.jpct.FrameBuffer;
@@ -13,24 +12,29 @@ import com.threed.jpct.SimpleVector;
 import com.threed.jpct.World;
 import com.threed.jpct.util.MemoryHelper;
 
+import java.util.List;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import ch.bissbert.peakseek.MainActivity;
+import ch.bissbert.peakseek.activities.MainActivity;
 import ch.bissbert.peakseek.graphics.rotation.ViewRotation;
 
 public class SeekManager {
 
+    public static boolean reloadColor;
     private final Resources resources;
     private final GLSurfaceView mGLView;
     private final MainActivity activity;
-    private final RGBColor BACKGROUND_COLOR = new RGBColor(50, 50, 100);
+    private final RGBColor BACKGROUND_COLOR = new RGBColor(0,0,0,0);
     private MyRenderer renderer;
     private FrameBuffer fb = null;
     private World world = null;
     private int fps = 0;
 
     private ViewRotation viewRotation;
+    private Light sun;
+    private Camera cam;
 
     public SeekManager(Resources resources, GLSurfaceView mGLView, MainActivity activity) {
         this.resources = resources;
@@ -47,8 +51,24 @@ public class SeekManager {
         mGLView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 
         mGLView.getHolder().setFormat(PixelFormat.RGBA_8888);
+
+        world = new World();
+        world.setAmbientLight(20, 20, 20);
+
+        sun = new Light(world);
+        sun.setIntensity(250, 250, 250);
+
+        cam = world.getCamera();
+        cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
+        //cam.lookAt(sphere.getTransformedCenter());
+
+        SimpleVector sv = new SimpleVector(0,-20,0);
+        sun.setPosition(sv);
+
         renderer = new MyRenderer();
         mGLView.setRenderer(renderer);
+
+        onResume();
     }
 
     /**
@@ -72,6 +92,25 @@ public class SeekManager {
         viewRotation.onOrientationChanged(yaw, pitch);
     }
 
+    public void setSpheres(List<Sphere> spheres) {
+        if (world == null) return;
+        Sphere[] sphereArray = new Sphere[spheres.size()];
+        spheres.toArray(sphereArray);
+        world.removeAllObjects();
+        System.out.println("Spheres: " + spheres.toString());
+        world.addObjects(sphereArray);
+    }
+
+    public void clearScreen() {
+        if (world == null) return;
+        world.removeAllObjects();
+    }
+
+    public void addSphere(Sphere sphere) {
+        if (world == null) return;
+        world.addObject(sphere);
+    }
+
     class MyRenderer implements GLSurfaceView.Renderer {
 
         private long time = System.currentTimeMillis();
@@ -83,20 +122,9 @@ public class SeekManager {
 
             fb = new FrameBuffer(gl, w, h);
 
-            world = new World();
-            world.setAmbientLight(20, 20, 20);
-
-            Light sun = new Light(world);
-            sun.setIntensity(250, 250, 250);
-
-            world.addObject(new Sphere(800, 12, 33, resources));
-            world.addObject(new Sphere(50, -10, 125, resources));
-            world.addObject(new Sphere(100, 100, 100, resources));
-
             viewRotation.set(world.getCamera(), activity);
-            viewRotation.moveCamera(Camera.CAMERA_MOVEOUT, 50);
+            //viewRotation.moveCamera(Camera.CAMERA_MOVEOUT, 50);
 
-            sun.setPosition(new SimpleVector(0, -20, 0));
             MemoryHelper.compact();
         }
 
@@ -104,16 +132,18 @@ public class SeekManager {
 
         public void onDrawFrame(GL10 gl) {
             fb.clear(BACKGROUND_COLOR);
-            world.renderScene(fb);
-            world.draw(fb);
-            fb.display();
-
+            if (fb != null) {
+                world.renderScene(fb);
+                world.draw(fb);
+                fb.display();
+            }
+/*
             if (System.currentTimeMillis() - time >= 1000) {
                 Log.i("fps", fps + "");
                 fps = 0;
                 time = System.currentTimeMillis();
             }
-            fps++;
+            fps++;*/
         }
     }
 }

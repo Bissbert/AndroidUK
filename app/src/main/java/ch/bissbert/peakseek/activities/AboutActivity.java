@@ -1,10 +1,12 @@
-package ch.bissbert.peakseek;
+package ch.bissbert.peakseek.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+
+import ch.bissbert.peakseek.R;
 
 /**
  * Just the activity for the about page

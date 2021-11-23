@@ -1,26 +1,20 @@
-package ch.bissbert.peakseek;
+package ch.bissbert.peakseek.activities;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 
-import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.ColorPickerDialog;
-import com.skydoves.colorpickerview.ColorPickerView;
-import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import com.skydoves.colorpickerview.listeners.ColorListener;
+
+import ch.bissbert.peakseek.R;
+import ch.bissbert.peakseek.SharedPreferenceManager;
+import ch.bissbert.peakseek.graphics.objects.SeekManager;
 
 /**
  * Activity controlling changes on the settings page
@@ -82,6 +76,7 @@ public class SettingsActivity extends Activity {
     private void setDefaultColor(int color) {
         manager.setColor(color);
         colorView.setBackgroundColor(color);
+        SeekManager.reloadColor = true;
     }
 
     /**

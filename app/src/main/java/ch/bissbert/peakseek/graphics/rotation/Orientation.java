@@ -7,7 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import ch.bissbert.peakseek.MainActivity;
+import ch.bissbert.peakseek.activities.MainActivity;
 import ch.bissbert.peakseek.R;
 
 public class Orientation implements SensorEventListener {

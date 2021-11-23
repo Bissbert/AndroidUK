@@ -3,7 +3,7 @@ package ch.bissbert.peakseek.graphics.rotation;
 import com.threed.jpct.Camera;
 import com.threed.jpct.SimpleVector;
 
-import ch.bissbert.peakseek.MainActivity;
+import ch.bissbert.peakseek.activities.MainActivity;
 
 public class ViewRotation {
     private Camera camera;
