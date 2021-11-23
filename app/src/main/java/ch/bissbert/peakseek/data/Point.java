@@ -141,6 +141,7 @@ public class Point extends SugarRecord {
 
     /**
      * generates a sphere in relation to the location given as a param
+     *
      * @param north
      * @param east
      * @param resources
@@ -149,7 +150,7 @@ public class Point extends SugarRecord {
     public Sphere createSphere(double north, double east, Resources resources) {
         int relationScale = resources.getInteger(R.integer.RENDER_SCALE);
         double x = (this.getNorth() - north), y = (this.getEast() - east);
-        return new Sphere((float) x / relationScale, (float) y / relationScale, (float) this.getAltitude() / relationScale, resources);
+        return new Sphere((float) x / relationScale, (float) this.getAltitude() / relationScale, (float) y / relationScale, resources);
     }
 
     /**
