@@ -4,4 +4,6 @@
     <integer name="size_of_sphere">10</integer>
     <integer name="FETCH_SIZE">250</integer>
     <integer name="DEFAULT_RENDER_DISTANCE">1000</integer>
+    <integer name="SENSOR_DELAY_MICROS">16000</integer>
+    <integer name="ANTI_JITTER">2</integer>
 </resources>

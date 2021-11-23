@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import ch.bissbert.peakseek.dao.LocationFetcher;
 import ch.bissbert.peakseek.graphics.objects.SeekManager;
+import ch.bissbert.peakseek.graphics.rotation.Orientation;
 
 /**
  * Main activity containing the find screen as well as the button to switch to the settings menu
@@ -31,18 +32,14 @@ import ch.bissbert.peakseek.graphics.objects.SeekManager;
  * @author Bissbert, BeeTheKay
  * @see SettingsActivity
  */
-public class MainActivity extends AppCompatActivity implements LifecycleOwner {
-
-    private SeekManager seekManager;
+public class MainActivity extends AppCompatActivity implements LifecycleOwner, Orientation.Listener {
 
     private static boolean run = false;
-    // Used to handle pause and resume...
-    private static MainActivity master = null;
-
-    private CameraManager cameraManager;
     private final int REQUEST_CODE_PERMISSIONS = 1001;
     private final String[] permissions = {android.Manifest.permission.CAMERA};
-
+    // Used to handle pause and resume...
+    private SeekManager seekManager;
+    private CameraManager cameraManager;
 
     public MainActivity() {
         super();
@@ -54,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
      * Loads the data from the database if first time open or else asks if to load when new data is available
      */
     public void runOnce() {
+
         if (!run) {
             Log.i(getString(R.string.LOAD_TAG), "starting app");
             Log.i(getString(R.string.LOAD_TAG), "query if network is available");
@@ -95,9 +93,10 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
 
     /**
      * run on creation of app
-     *
+     * <p>
      * sets activity as main activity and loads the screen. Also loads the database({@link #runOnce()}),
      * initiates the SugarContext and loads the seekScreen({@link #loadSeekScreen()})
+     *
      * @param savedInstanceState instance of saved state
      */
     @Override
@@ -110,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
         SugarContext.init(this);
         runOnce();
 
-        if (hasNoPermissions()){
+        if (hasNoPermissions()) {
             requestPermission();
         }
 
@@ -121,13 +120,13 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
 
     }
 
-    private boolean hasNoPermissions(){
+    private boolean hasNoPermissions() {
         return ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED;
+                                                 Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestPermission(){
-        ActivityCompat.requestPermissions(this, permissions,REQUEST_CODE_PERMISSIONS);
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS);
     }
 
     /**
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
      */
     private void loadSeekScreen() {
         GLSurfaceView surfaceView = findViewById(R.id.peakSeekGLView);
-        seekManager = new SeekManager(getResources(), surfaceView);
+        seekManager = new SeekManager(getResources(), surfaceView, this);
         seekManager.loadSeekScreen();
     }
 
@@ -146,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
     protected void onPause() {
         super.onPause();
         seekManager.onPause();
-        //cameraManager.onPause();
     }
 
     /**
@@ -157,24 +155,35 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
         super.onResume();
         if (seekManager == null) loadSeekScreen();
         seekManager.onResume();
-        //cameraManager.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     /**
      * triggered when screen gets touched
+     *
      * @param me the {@link MotionEvent} containing the motion on the screen
      * @return a boolean whether succeeded
      */
     public boolean onTouchEvent(MotionEvent me) {
-        return seekManager.onTouchEvent(me) || super.onTouchEvent(me);
+        return super.onTouchEvent(me);
     }
 
     /**
      * opens the Settings menu using an intent
+     *
      * @param view button that triggered the method
      */
     public void openSettingsMenu(View view) {
         Intent setting = new Intent(this, SettingsActivity.class);
         startActivity(setting);
+    }
+
+    @Override
+    public void onOrientationChanged(float yaw, float pitch) {
+        seekManager.onOrientationChanged(yaw, pitch);
     }
 }
