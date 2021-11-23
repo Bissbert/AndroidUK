@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, O
 
     /**
      * run on creation of app
-     *
+     * <p>
      * sets activity as main activity and loads the screen. Also loads the database({@link #runOnce()}),
      * initiates the SugarContext and loads the seekScreen({@link #loadSeekScreen()})
      *
