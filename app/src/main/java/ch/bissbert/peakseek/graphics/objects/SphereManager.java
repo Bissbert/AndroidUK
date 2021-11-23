@@ -37,7 +37,7 @@ public class SphereManager implements LocationListener {
         Log.d("loading spheres", points.toString());
         seekManager.clearScreen();
         for (Point point : points){
-            seekManager.addSphere(point.createSphere(lv95[1], lv95[0], context.getResources()));
+            seekManager.addSphere(point.createSphere(lv95[1], lv95[0], context.getResources(), context));
         }
         //seekManager.setSpheres(spheres);
     }

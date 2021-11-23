@@ -1,10 +1,10 @@
 package ch.bissbert.peakseek.graphics.objects;
 
+import android.content.Context;
 import android.content.res.Resources;
 
 import com.threed.jpct.CollisionEvent;
 import com.threed.jpct.CollisionListener;
-import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.Primitives;
 import com.threed.jpct.RGBColor;
@@ -12,6 +12,7 @@ import com.threed.jpct.Texture;
 import com.threed.jpct.TextureManager;
 
 import ch.bissbert.peakseek.R;
+import ch.bissbert.peakseek.SharedPreferenceManager;
 import ch.bissbert.peakseek.data.Point;
 
 public class Sphere extends Object3D implements CollisionListener {
@@ -21,12 +22,14 @@ public class Sphere extends Object3D implements CollisionListener {
     private static final String TEXTURE_NAME = "sphereTexture";
     private final Point point;
     private final Resources resources;
+    private final Context context;
 
 
-    public Sphere(float x, float y, float z, Point point, Resources resources) {
+    public Sphere(float x, float y, float z, Point point, Resources resources, Context context) {
         super(Primitives.getSphere(resources.getInteger(R.integer.amount_of_faces), (resources.getInteger(R.integer.size_of_sphere)/resources.getInteger(R.integer.RENDER_SCALE))));
         this.point = point;
         this.resources = resources;
+        this.context = context;
         setTexture();
 
         this.calcTextureWrapSpherical();
@@ -37,8 +40,8 @@ public class Sphere extends Object3D implements CollisionListener {
         this.translate(x, y, z);
     }
 
-    public Sphere(Resources resources, Point point) {
-        this(0, 0, 0, point, resources);
+    public Sphere(Resources resources, Point point, Context context) {
+        this(0, 0, 0, point, resources, context);
     }
 
     private void setTexture() {
@@ -50,7 +53,7 @@ public class Sphere extends Object3D implements CollisionListener {
     }
 
     private RGBColor getColor(){
-        String colorStr = Integer.toHexString(resources.getColor(R.color.default_sphere_color, null));
+        String colorStr = Integer.toHexString(new SharedPreferenceManager(context).getColor());
         return new RGBColor(
                 Integer.valueOf(colorStr.substring(2, 4), 16),
                 Integer.valueOf(colorStr.substring(4, 6), 16),
@@ -76,7 +79,7 @@ public class Sphere extends Object3D implements CollisionListener {
 
     @Override
     public void collision(CollisionEvent collisionEvent) {
-
+        System.out.println("Test: "+collisionEvent.toString());
     }
 
     @Override

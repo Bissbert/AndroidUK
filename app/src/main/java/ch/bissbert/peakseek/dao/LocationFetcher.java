@@ -77,13 +77,39 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
      */
     @Override
     protected String doInBackground(String... params) {
+        int newest;
+        try (Connection connection = createConnection()) {
+            createConnection();
+            newest = checkIfNewest();
+            Log.d(resources.getString(R.string.LOAD_TAG), "newest level: " + newest);
+
+            if (newest == 2) {
+                /*askUser = true;
+                new AlertDialog.Builder(context)
+                        .setTitle(resources.getString(R.string.FETCHNEW_TITLE))
+                        .setMessage(resources.getString(R.string.FETCHNEW_MESSAGE))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                try {
+                    loadNewData();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                        })
+                        .setNegativeButton(android.R.string.no, null).show();*/
+            } else if (newest == 0) {
+                loadNewData();
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         return "";
     }
 
     @Override
     protected void onPostExecute(String s) {
         //Looper.prepare();
-        int newest;
+        /*int newest;
         try (Connection connection = createConnection()){
             createConnection();
             newest = checkIfNewest();
@@ -109,6 +135,7 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        super.onPostExecute(s);*/
         super.onPostExecute(s);
     }
 
@@ -138,13 +165,13 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
 
         try (PreparedStatement statement = connection.prepareStatement(fetchStatement, ResultSet.TYPE_FORWARD_ONLY)) {
             Point.deleteAll(Point.class);
-            ProgressBar progressBar = createDialog();
-            progressBar.setMax(size);
+            //ProgressBar progressBar = createDialog();
+            //progressBar.setMax(size);
             try (ResultSet resultSet = statement.executeQuery()) {
                 resultSet.setFetchSize(resources.getInteger(R.integer.FETCH_SIZE));
                 while (resultSet.next()) {
                     Point.save(createPoint(resultSet));
-                    progressBar.incrementProgressBy(1);
+                    //progressBar.incrementProgressBy(1);
                     Log.d(resources.getString(R.string.LOAD_TAG), "current row: " + resultSet.getRow());
                 }
             }

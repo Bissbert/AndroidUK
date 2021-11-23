@@ -1,13 +1,13 @@
 package ch.bissbert.peakseek.data;
 
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.location.Location;
 
 import androidx.core.util.Pair;
 
 import com.orm.SugarRecord;
-import com.threed.jpct.Object3D;
 
 import ch.bissbert.peakseek.R;
 import ch.bissbert.peakseek.graphics.objects.Sphere;
@@ -148,10 +148,10 @@ public class Point extends SugarRecord {
      * @param resources
      * @return
      */
-    public Sphere createSphere(double north, double east, Resources resources) {
+    public Sphere createSphere(double north, double east, Resources resources, Context context) {
         int relationScale = resources.getInteger(R.integer.RENDER_SCALE);
         double x = (this.getNorth() - north), y = (this.getEast() - east);
-        Sphere sphere = new Sphere((float) x / relationScale, (float) this.getAltitude() / relationScale, (float) y / relationScale, this, resources);
+        Sphere sphere = new Sphere((float) x / relationScale, (float) this.getAltitude() / relationScale, (float) y / relationScale, this, resources, context);
         //sphere.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
         //sphere.setCollisionOptimization(Object3D.COLLISION_DETECTION_OPTIMIZED);
         return sphere;
