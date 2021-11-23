@@ -6,32 +6,28 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
-import android.view.WindowManager;
 
+import ch.bissbert.peakseek.MainActivity;
 import ch.bissbert.peakseek.R;
 
 public class Orientation implements SensorEventListener {
 
+    private final SensorManager mSensorManager;
+    private final Sensor mRotationSensor;
+    private final MainActivity activity;
     private Listener mListener;
     private int mLastAccuracy;
-
     private float lastYaw = 0;
     private float lastPitch = 0;
 
-    public interface  Listener {
-        void onOrientationChanged(float yaw, float pitch);
-    }
+    public Orientation(MainActivity activity) {
+        this.activity = activity;
 
-    private final SensorManager mSensorManager;
-    private final Sensor mRotationSensor;
-
-    public Orientation(Activity activity) {
         mSensorManager = (SensorManager) activity.getSystemService(Activity.SENSOR_SERVICE);
-
         mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
     }
 
-    public void startListening (Listener  listener) {
+    public void startListening(Listener listener) {
         if (mListener == listener) return;
         mListener = listener;
         if (mRotationSensor == null) {
@@ -74,9 +70,18 @@ public class Orientation implements SensorEventListener {
         float yaw = orientation[0] * -57;
         float pitch = orientation[1] * -57;
 
+        float antiJitter = (float) 1 / activity.getResources().getInteger(R.integer.ANTI_JITTER);
+
+        if ((pitch - lastPitch < antiJitter && pitch - lastPitch > -antiJitter) && (yaw - lastYaw < antiJitter && yaw - lastYaw > -antiJitter))
+            return;
+
         lastPitch = pitch;
         lastYaw = yaw;
 
         mListener.onOrientationChanged(yaw, pitch);
+    }
+
+    public interface Listener {
+        void onOrientationChanged(float yaw, float pitch);
     }
 }

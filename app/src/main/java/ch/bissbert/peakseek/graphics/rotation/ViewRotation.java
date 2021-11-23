@@ -1,13 +1,5 @@
 package ch.bissbert.peakseek.graphics.rotation;
 
-import android.app.Activity;
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.util.Log;
-
 import com.threed.jpct.Camera;
 import com.threed.jpct.SimpleVector;
 
@@ -37,6 +29,7 @@ public class ViewRotation {
     }
 
     public void onOrientationChanged(float yaw, float pitch) {
+        if (camera == null) return;
         camera.lookAt(new SimpleVector(-yaw, -pitch, 0));
     }
 

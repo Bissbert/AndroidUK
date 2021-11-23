@@ -42,7 +42,7 @@ public class Sphere extends Object3D {
         this.setTexture(TEXTURE_NAME);
     }
 
-    private RGBColor getColor(){
+    private RGBColor getColor() {
         String colorStr = Integer.toHexString(resources.getColor(R.color.default_sphere_color, null));
         return new RGBColor(
                 Integer.valueOf(colorStr.substring(2, 4), 16),

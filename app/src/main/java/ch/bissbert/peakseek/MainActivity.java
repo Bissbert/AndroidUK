@@ -8,9 +8,6 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-
-import ch.bissbert.peakseek.graphics.objects.SeekManager;
-
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,10 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.orm.SugarContext;
 import com.threed.jpct.Logger;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import ch.bissbert.peakseek.dao.LocationFetcher;
+import ch.bissbert.peakseek.graphics.objects.SeekManager;
 import ch.bissbert.peakseek.graphics.rotation.Orientation;
 
 /**
@@ -32,13 +29,10 @@ import ch.bissbert.peakseek.graphics.rotation.Orientation;
  */
 public class MainActivity extends AppCompatActivity implements Orientation.Listener {
 
-    private SeekManager seekManager;
-
     private static boolean run = false;
     // Used to handle pause and resume...
-    private static MainActivity master = null;
-
-
+    private static final MainActivity master = null;
+    private SeekManager seekManager;
 
     public MainActivity() {
         super();
@@ -161,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements Orientation.Liste
         Intent setting = new Intent(this, SettingsActivity.class);
         startActivity(setting);
     }
-
 
     @Override
     public void onOrientationChanged(float yaw, float pitch) {
