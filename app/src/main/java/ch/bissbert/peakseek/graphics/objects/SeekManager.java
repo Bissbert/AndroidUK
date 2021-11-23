@@ -24,11 +24,11 @@ public class SeekManager {
     private final Resources resources;
     private final GLSurfaceView mGLView;
     private final MainActivity activity;
+    private final RGBColor BACKGROUND_COLOR = new RGBColor(50, 50, 100);
+
     private MyRenderer renderer = null;
     private FrameBuffer fb = null;
     private World world = null;
-    private final RGBColor BACKGROUND_COLOR = new RGBColor(50, 50, 100);
-
     private int fps = 0;
 
     private ViewRotation viewRotation;
@@ -45,7 +45,7 @@ public class SeekManager {
     public void loadSeekScreen() {
         mGLView.setZOrderOnTop(true);
 
-        mGLView.setEGLConfigChooser(8,8,8,8,16,0);
+        mGLView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 
         mGLView.getHolder().setFormat(PixelFormat.RGBA_8888);
         renderer = new MyRenderer();
@@ -77,13 +77,10 @@ public class SeekManager {
 
         private long time = System.currentTimeMillis();
 
-        public MyRenderer() {
-        }
+        public MyRenderer() { }
 
         public void onSurfaceChanged(GL10 gl, int w, int h) {
-            if (fb != null) {
-                fb.dispose();
-            }
+            if (fb != null) fb.dispose();
 
             fb = new FrameBuffer(gl, w, h);
 
@@ -93,9 +90,9 @@ public class SeekManager {
             Light sun = new Light(world);
             sun.setIntensity(250, 250, 250);
 
-            world.addObject(new Sphere(800,12,33,resources));
-            world.addObject(new Sphere(50,-10,125,resources));
-            world.addObject(new Sphere(100,100,100,resources));
+            world.addObject(new Sphere(800, 12, 33, resources));
+            world.addObject(new Sphere(50, -10, 125, resources));
+            world.addObject(new Sphere(100, 100, 100, resources));
 
             viewRotation.set(world.getCamera(), activity);
             viewRotation.moveCamera(Camera.CAMERA_MOVEOUT, 50);
@@ -104,8 +101,7 @@ public class SeekManager {
             MemoryHelper.compact();
         }
 
-        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        }
+        public void onSurfaceCreated(GL10 gl, EGLConfig config) { }
 
         public void onDrawFrame(GL10 gl) {
             fb.clear(BACKGROUND_COLOR);
@@ -119,9 +115,8 @@ public class SeekManager {
                 fps = 0;
                 time = System.currentTimeMillis();
             }
+
             fps++;
         }
-
-
     }
 }
