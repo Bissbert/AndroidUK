@@ -35,9 +35,10 @@ public class SphereManager implements LocationListener {
         List<Point> points = LocationFetcher.getPointsInRadius(location, radius);
         List<Sphere> spheres = new ArrayList<>();
         Log.d("loading spheres", points.toString());
+        seekManager.clearScreen();
         for (Point point : points){
-            spheres.add(point.createSphere(lv95[1], lv95[0], context.getResources()));
+            seekManager.addSphere(point.createSphere(lv95[1], lv95[0], context.getResources()));
         }
-        seekManager.setSpheres(spheres);
+        //seekManager.setSpheres(spheres);
     }
 }

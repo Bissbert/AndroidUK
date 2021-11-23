@@ -211,12 +211,6 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
      * @return a boolean whether succeeded
      */
     public boolean onTouchEvent(MotionEvent me) {
-        if (sphereManager != null && locationManager != null && !firstTriggerHappened) {
-            firstTriggerHappened = true;
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                sphereManager.onLocationChanged(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
-            }
-        }
         return seekManager.onTouchEvent(me) || super.onTouchEvent(me);
     }
 

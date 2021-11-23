@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.location.LocationManager;
 import android.opengl.GLSurfaceView;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -63,6 +64,19 @@ public class SeekManager {
 
         mGLView.getHolder().setFormat(PixelFormat.RGBA_8888);
 
+        world = new World();
+        world.setAmbientLight(20, 20, 20);
+
+        sun = new Light(world);
+        sun.setIntensity(250, 250, 250);
+
+        cam = world.getCamera();
+        cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
+        //cam.lookAt(sphere.getTransformedCenter());
+
+        SimpleVector sv = new SimpleVector(0,-20,0);
+        sun.setPosition(sv);
+
         renderer = new MyRenderer();
         mGLView.setRenderer(renderer);
     }
@@ -117,11 +131,11 @@ public class SeekManager {
             return true;
         }
 
-        try {
-            Thread.sleep(15);
+        /*try {
+            SystemClock.sleep(15);
         } catch (Exception e) {
             // No need for this...
-        }
+        }*/
 
         return false;
     }
@@ -136,12 +150,18 @@ public class SeekManager {
         Sphere[] sphereArray = new Sphere[spheres.size()];
         spheres.toArray(sphereArray);
         world.removeAllObjects();
-        System.out.println("Spheres: "+spheres.toString());
+        System.out.println("Spheres: " + spheres.toString());
         world.addObjects(sphereArray);
-        /*for (Sphere sphere : spheres) {
-            world.addObject(sphere);
-            Log.d("setting spheres", "render sphere: " + sphere);
-        }*/
+    }
+
+    public void clearScreen() {
+        if (world == null) return;
+        world.removeAllObjects();
+    }
+
+    public void addSphere(Sphere sphere) {
+        if (world == null) return;
+        world.addObject(sphere);
     }
 
     class MyRenderer implements GLSurfaceView.Renderer {
@@ -158,26 +178,6 @@ public class SeekManager {
             }
 
             fb = new FrameBuffer(gl, w, h);
-
-            world = new World();
-            world.setAmbientLight(20, 20, 20);
-
-            sun = new Light(world);
-            sun.setIntensity(250, 250, 250);
-
-            sphere = new Sphere(resources);
-
-            world.addObject(sphere);
-
-            cam = world.getCamera();
-            cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
-            cam.lookAt(sphere.getTransformedCenter());
-
-            SimpleVector sv = new SimpleVector();
-            sv.set(sphere.getTransformedCenter());
-            sv.y -= 100;
-            sv.z -= 100;
-            sun.setPosition(sv);
             MemoryHelper.compact();
         }
 
