@@ -45,7 +45,6 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
 
     private final String schema;
     private final String table;
-    private boolean askUser = false;
 
     public LocationFetcher(Activity context) throws ClassNotFoundException, SQLException {
         this.context = context;
@@ -58,65 +57,28 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         Log.d(resources.getString(R.string.LOAD_TAG), "table=" + table);
     }
 
-    private Connection createConnection() throws SQLException {
-        String dbUrl = resources.getString(R.string.DB_URL);
-        String user = resources.getString(R.string.DB_USER);
-        String password = resources.getString(R.string.DB_PASSWORD);
-        Log.d(resources.getString(R.string.LOAD_TAG), "creating connection to DB");
-        this.connection = DriverManager.getConnection(dbUrl, user, password);
-        Log.d(resources.getString(R.string.LOAD_TAG), "connection to DB created");
-        return this.connection;
-    }
-
 
     /**
      * Will be executed in the background when the {@link #execute(Runnable)} method gets executed
-     *
      * @param params params given
      * @return an empty string
      */
     @Override
     protected String doInBackground(String... params) {
+        Looper.prepare();
         int newest;
-        try (Connection connection = createConnection()) {
-            createConnection();
+        try {
+            String dbUrl = resources.getString(R.string.DB_URL);
+            String user = resources.getString(R.string.DB_USER);
+            String password = resources.getString(R.string.DB_PASSWORD);
+            Log.d(resources.getString(R.string.LOAD_TAG), "creating connection to DB");
+            this.connection = DriverManager.getConnection(dbUrl, user, password);
+            Log.d(resources.getString(R.string.LOAD_TAG), "connection to DB created");
+
             newest = checkIfNewest();
             Log.d(resources.getString(R.string.LOAD_TAG), "newest level: " + newest);
 
             if (newest == 2) {
-                /*askUser = true;
-                new AlertDialog.Builder(context)
-                        .setTitle(resources.getString(R.string.FETCHNEW_TITLE))
-                        .setMessage(resources.getString(R.string.FETCHNEW_MESSAGE))
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                try {
-                    loadNewData();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-                        })
-                        .setNegativeButton(android.R.string.no, null).show();*/
-            } else if (newest == 0) {
-                loadNewData();
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return "";
-    }
-
-    @Override
-    protected void onPostExecute(String s) {
-        //Looper.prepare();
-        /*int newest;
-        try (Connection connection = createConnection()){
-            createConnection();
-            newest = checkIfNewest();
-            Log.d(resources.getString(R.string.LOAD_TAG), "newest level: " + newest);
-
-            if (newest == 2) {
-                askUser = true;
                 new AlertDialog.Builder(context)
                         .setTitle(resources.getString(R.string.FETCHNEW_TITLE))
                         .setMessage(resources.getString(R.string.FETCHNEW_MESSAGE))
@@ -134,9 +96,14 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
-        super.onPostExecute(s);*/
-        super.onPostExecute(s);
+        return "";
     }
 
     /**
@@ -165,13 +132,13 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
 
         try (PreparedStatement statement = connection.prepareStatement(fetchStatement, ResultSet.TYPE_FORWARD_ONLY)) {
             Point.deleteAll(Point.class);
-            //ProgressBar progressBar = createDialog();
-            //progressBar.setMax(size);
+            ProgressBar progressBar = createDialog();
+            progressBar.setMax(size);
             try (ResultSet resultSet = statement.executeQuery()) {
                 resultSet.setFetchSize(resources.getInteger(R.integer.FETCH_SIZE));
                 while (resultSet.next()) {
                     Point.save(createPoint(resultSet));
-                    //progressBar.incrementProgressBy(1);
+                    progressBar.incrementProgressBy(1);
                     Log.d(resources.getString(R.string.LOAD_TAG), "current row: " + resultSet.getRow());
                 }
             }
@@ -338,7 +305,6 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
 
     /**
      * returns whether the current state of the data is the newest
-     *
      * @return 0 if not loaded at all, 1 if no new data is available, 2 if new data is available
      * @throws SQLException thrown when the request to the database goes wrong
      */
@@ -385,22 +351,20 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
 
     /**
      * fetches the points in the vicinity of the given points by a radius
-     *
      * @param radiusInMeter the radius of points in meter
-     * @param north         north in the swiss LV95 coordinate system
-     * @param east          east in the swiss LV95 coordinate system
+     * @param north north in the swiss LV95 coordinate system
+     * @param east east in the swiss LV95 coordinate system
      * @return list of Points fetched
      */
     public static List<Point> getPointsInRadius(int radiusInMeter, int north, int east) {
 
-        String query = "SELECT id, name, east, north, altitude, type, language ,((east-?)*(east-?)+(north-?)*(north-?)) as distance\n" +
+        String query = "SELECT idLocations as id, name, east, north, height, type, language ,(SQRT(POW(east-?,2)+POW(north-?, 2))) as distance\n" +
                 "FROM Point\n" +
                 "WHERE " + pointTypeOrQuery() + "\n" +
-                "GROUP BY distance\n" +
-                "HAVING distance <= (? * ?) AND distance > 0\n" +
+                "HAVING distance <= ? AND distance > 0\n" +
                 "ORDER BY distance";
-        Log.d("Loading Points", "rad = '" + radiusInMeter + "',  north = '" + north + "', east = '" + east + "'");
-        List<Point> points = Point.findWithQuery(Point.class, query, String.valueOf(east), String.valueOf(east), String.valueOf(north), String.valueOf(north), String.valueOf(radiusInMeter), String.valueOf(radiusInMeter));
+
+        List<Point> points = Point.findWithQuery(Point.class, query, String.valueOf(east), String.valueOf(north), String.valueOf(radiusInMeter));
 
         /*try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, east);
@@ -415,8 +379,8 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         return points;
     }
 
-    public static List<Point> getPointsInRadius(Location location, int radiusInMeter) {
+    public List<Point> getPointsInRadius(Location location, int radiusInMeter){
         double[] pos = Point.wgs84ToLV95(location.getLongitude(), location.getLatitude(), location.getAltitude());
-        return getPointsInRadius(radiusInMeter, (int) pos[1], (int) pos[0]);
+        return getPointsInRadius(radiusInMeter, (int)pos[0], (int)pos[1]);
     }
 }

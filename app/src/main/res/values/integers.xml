@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="amount_of_faces">40</integer>
-    <integer name="size_of_sphere">150</integer>
+    <integer name="amount_of_faces">60</integer>
+    <integer name="size_of_sphere">10</integer>
     <integer name="FETCH_SIZE">250</integer>
-    <integer name="DEFAULT_RENDER_DISTANCE">10000</integer>
-    <integer name="RENDER_SCALE">100</integer>
+    <integer name="DEFAULT_RENDER_DISTANCE">1000</integer>
     <integer name="SENSOR_DELAY_MICROS">16000</integer>
     <integer name="ANTI_JITTER">2</integer>
 </resources>

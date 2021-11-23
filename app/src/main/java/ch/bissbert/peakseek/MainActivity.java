@@ -1,11 +1,9 @@
 package ch.bissbert.peakseek;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.opengl.GLSurfaceView;
@@ -14,7 +12,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -27,7 +24,6 @@ import java.sql.SQLException;
 
 import ch.bissbert.peakseek.dao.LocationFetcher;
 import ch.bissbert.peakseek.graphics.objects.SeekManager;
-import ch.bissbert.peakseek.graphics.objects.SphereManager;
 import ch.bissbert.peakseek.graphics.rotation.Orientation;
 
 /**
@@ -40,11 +36,10 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, O
 
     private static boolean run = false;
     private final int REQUEST_CODE_PERMISSIONS = 1001;
-    private final String[] permissions = {android.Manifest.permission.CAMERA, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
-
-    private SphereManager sphereManager;
-    private LocationManager locationManager;
-    private boolean firstTriggerHappened;
+    private final String[] permissions = {android.Manifest.permission.CAMERA};
+    // Used to handle pause and resume...
+    private SeekManager seekManager;
+    private CameraManager cameraManager;
 
     public MainActivity() {
         super();
@@ -114,24 +109,20 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, O
         SugarContext.init(this);
         runOnce();
 
-        if (seekManager == null) loadSeekScreen();
-
         if (hasNoPermissions()) {
             requestPermission();
-        } else {
-            afterRights();
         }
+
+        cameraManager = new CameraManager(this, findViewById(R.id.cameraView));
+        cameraManager.onCreate();
+
+        if (seekManager == null) loadSeekScreen();
 
     }
 
     private boolean hasNoPermissions() {
-        for (String perm : permissions) {
-            if (ContextCompat.checkSelfPermission(this,
-                    perm) != PackageManager.PERMISSION_GRANTED) {
-                return true;
-            }
-        }
-        return false;
+        return ContextCompat.checkSelfPermission(this,
+                                                 Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
@@ -145,37 +136,6 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, O
         GLSurfaceView surfaceView = findViewById(R.id.peakSeekGLView);
         seekManager = new SeekManager(getResources(), surfaceView, this);
         seekManager.loadSeekScreen();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (hasNoPermissions()) {
-            return;
-        }
-        afterRights();
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private void afterRights() {
-        cameraManager = new CameraManager(this, findViewById(R.id.cameraView));
-        cameraManager.onCreate();
-        loadByGPS();
-    }
-
-    public void loadByGPS() {
-        Log.i(getString(R.string.GPS), "loading gps data");
-
-        locationManager = (LocationManager)
-                getSystemService(Context.LOCATION_SERVICE);
-        Log.i(getString(R.string.GPS), "creating the sphere manager");
-
-        sphereManager = new SphereManager(seekManager, this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.i(getString(R.string.GPS), "setting GPS listener");
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0.5f, sphereManager);
-        }
     }
 
     /**

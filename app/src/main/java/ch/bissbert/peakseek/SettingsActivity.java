@@ -22,8 +22,6 @@ import com.skydoves.colorpickerview.ColorPickerView;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import com.skydoves.colorpickerview.listeners.ColorListener;
 
-import ch.bissbert.peakseek.graphics.objects.SeekManager;
-
 /**
  * Activity controlling changes on the settings page
  *
@@ -84,7 +82,6 @@ public class SettingsActivity extends Activity {
     private void setDefaultColor(int color) {
         manager.setColor(color);
         colorView.setBackgroundColor(color);
-        SeekManager.reloadColor();
     }
 
     /**
