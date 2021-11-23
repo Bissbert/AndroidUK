@@ -7,6 +7,7 @@ import android.location.Location;
 import androidx.core.util.Pair;
 
 import com.orm.SugarRecord;
+import com.threed.jpct.Object3D;
 
 import ch.bissbert.peakseek.R;
 import ch.bissbert.peakseek.graphics.objects.Sphere;
@@ -150,7 +151,10 @@ public class Point extends SugarRecord {
     public Sphere createSphere(double north, double east, Resources resources) {
         int relationScale = resources.getInteger(R.integer.RENDER_SCALE);
         double x = (this.getNorth() - north), y = (this.getEast() - east);
-        return new Sphere((float) x / relationScale, (float) this.getAltitude() / relationScale, (float) y / relationScale, resources);
+        Sphere sphere = new Sphere((float) x / relationScale, (float) this.getAltitude() / relationScale, (float) y / relationScale, this, resources);
+        //sphere.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+        //sphere.setCollisionOptimization(Object3D.COLLISION_DETECTION_OPTIMIZED);
+        return sphere;
     }
 
     /**

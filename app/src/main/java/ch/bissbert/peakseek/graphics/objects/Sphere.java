@@ -2,6 +2,9 @@ package ch.bissbert.peakseek.graphics.objects;
 
 import android.content.res.Resources;
 
+import com.threed.jpct.CollisionEvent;
+import com.threed.jpct.CollisionListener;
+import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.Primitives;
 import com.threed.jpct.RGBColor;
@@ -9,29 +12,33 @@ import com.threed.jpct.Texture;
 import com.threed.jpct.TextureManager;
 
 import ch.bissbert.peakseek.R;
+import ch.bissbert.peakseek.data.Point;
 
-public class Sphere extends Object3D {
+public class Sphere extends Object3D implements CollisionListener {
 
     private static final int TEXTURE_WIDTH = 10;
     private static final int TEXTURE_HEIGHT = 10;
     private static final String TEXTURE_NAME = "sphereTexture";
+    private final Point point;
     private final Resources resources;
 
-    public Sphere(float x, float y, float z, Resources resources) {
-        super(Primitives.getSphere(resources.getInteger(R.integer.amount_of_faces), resources.getInteger(R.integer.size_of_sphere)));
-        this.resources = resources;
 
+    public Sphere(float x, float y, float z, Point point, Resources resources) {
+        super(Primitives.getSphere(resources.getInteger(R.integer.amount_of_faces), (resources.getInteger(R.integer.size_of_sphere)/resources.getInteger(R.integer.RENDER_SCALE))));
+        this.point = point;
+        this.resources = resources;
         setTexture();
 
         this.calcTextureWrapSpherical();
+
         this.strip();
         this.build();
 
         this.translate(x, y, z);
     }
 
-    public Sphere(Resources resources) {
-        this(0, 0, 0, resources);
+    public Sphere(Resources resources, Point point) {
+        this(0, 0, 0, point, resources);
     }
 
     private void setTexture() {
@@ -54,6 +61,10 @@ public class Sphere extends Object3D {
         return resources.getInteger(R.integer.amount_of_faces);
     }
 
+    public Point getPoint() {
+        return point;
+    }
+
     @Override
     public String toString() {
         return "Sphere{" +
@@ -61,5 +72,15 @@ public class Sphere extends Object3D {
                 "y=" + getTranslation().y + ", " +
                 "x=" + getTranslation().z +
                 '}';
+    }
+
+    @Override
+    public void collision(CollisionEvent collisionEvent) {
+
+    }
+
+    @Override
+    public boolean requiresPolygonIDs() {
+        return false;
     }
 }
