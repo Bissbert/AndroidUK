@@ -1,7 +1,9 @@
 package ch.bissbert.peakseek;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.opengl.GLSurfaceView;
@@ -11,6 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.orm.SugarContext;
 import com.threed.jpct.Logger;
@@ -27,12 +32,14 @@ import ch.bissbert.peakseek.graphics.rotation.Orientation;
  * @author Bissbert, BeeTheKay
  * @see SettingsActivity
  */
-public class MainActivity extends AppCompatActivity implements Orientation.Listener {
+public class MainActivity extends AppCompatActivity implements LifecycleOwner, Orientation.Listener {
 
     private static boolean run = false;
+    private final int REQUEST_CODE_PERMISSIONS = 1001;
+    private final String[] permissions = {android.Manifest.permission.CAMERA};
     // Used to handle pause and resume...
-    private static final MainActivity master = null;
     private SeekManager seekManager;
+    private CameraManager cameraManager;
 
     public MainActivity() {
         super();
@@ -89,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements Orientation.Liste
      *
      * sets activity as main activity and loads the screen. Also loads the database({@link #runOnce()}),
      * initiates the SugarContext and loads the seekScreen({@link #loadSeekScreen()})
+     *
      * @param savedInstanceState instance of saved state
      */
     @Override
@@ -101,8 +109,24 @@ public class MainActivity extends AppCompatActivity implements Orientation.Liste
         SugarContext.init(this);
         runOnce();
 
+        if (hasNoPermissions()) {
+            requestPermission();
+        }
+
+        cameraManager = new CameraManager(this, findViewById(R.id.cameraView));
+        cameraManager.onCreate();
+
         if (seekManager == null) loadSeekScreen();
 
+    }
+
+    private boolean hasNoPermissions() {
+        return ContextCompat.checkSelfPermission(this,
+                                                 Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS);
     }
 
     /**
@@ -140,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements Orientation.Liste
 
     /**
      * triggered when screen gets touched
+     *
      * @param me the {@link MotionEvent} containing the motion on the screen
      * @return a boolean whether succeeded
      */
@@ -149,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements Orientation.Liste
 
     /**
      * opens the Settings menu using an intent
+     *
      * @param view button that triggered the method
      */
     public void openSettingsMenu(View view) {

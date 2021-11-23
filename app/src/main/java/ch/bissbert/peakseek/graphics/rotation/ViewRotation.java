@@ -34,7 +34,7 @@ public class ViewRotation {
     }
 
     public void onResume() {
-        if (orientation == null)  orientation = new Orientation(activity);
+        if (orientation == null) orientation = new Orientation(activity);
         orientation.startListening(activity);
     }
 
