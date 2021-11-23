@@ -1,16 +1,11 @@
 package ch.bissbert.peakseek.data;
 
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.location.Location;
 
 import androidx.core.util.Pair;
 
 import com.orm.SugarRecord;
-
-import ch.bissbert.peakseek.R;
-import ch.bissbert.peakseek.graphics.objects.Sphere;
 
 /**
  * Point containing the location
@@ -141,23 +136,6 @@ public class Point extends SugarRecord {
     }
 
     /**
-     * generates a sphere in relation to the location given as a param
-     *
-     * @param north
-     * @param east
-     * @param resources
-     * @return
-     */
-    public Sphere createSphere(double north, double east, Resources resources, Context context) {
-        int relationScale = resources.getInteger(R.integer.RENDER_SCALE);
-        double x = (this.getNorth() - north), y = (this.getEast() - east);
-        Sphere sphere = new Sphere((float) x / relationScale, (float) this.getAltitude() / relationScale, (float) y / relationScale, this, resources, context);
-        //sphere.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-        //sphere.setCollisionOptimization(Object3D.COLLISION_DETECTION_OPTIMIZED);
-        return sphere;
-    }
-
-    /**
      * calculates the distance between the current node and the given WGS-84 coordinates
      *
      * @param latitude  latitude of the point to measure the distance to
@@ -285,8 +263,8 @@ public class Point extends SugarRecord {
 
         double[] data = new double[3];
 
-        double x = (latitude * 3600 - 169028.66) / 10000;
-        double y = (longitude * 3600 - 26782.5) / 10000;
+        double x = (longitude - 169028.66) / 10000;
+        double y = (latitude - 26782.5) / 10000;
 
         //east
         data[0] = 2600072.37d
