@@ -21,6 +21,7 @@ public class Sphere extends Object3D implements CollisionListener {
     private static final int TEXTURE_HEIGHT = 10;
     private static final String TEXTURE_NAME = "sphereTexture";
     private final Point point;
+
     private final Resources resources;
     private final Context context;
 
@@ -49,6 +50,7 @@ public class Sphere extends Object3D implements CollisionListener {
             Texture sphereTexture = new Texture(TEXTURE_WIDTH, TEXTURE_HEIGHT, getColor());
             TextureManager.getInstance().addTexture(TEXTURE_NAME, sphereTexture);
         }
+
         this.setTexture(TEXTURE_NAME);
     }
 
@@ -58,6 +60,7 @@ public class Sphere extends Object3D implements CollisionListener {
                 Integer.valueOf(colorStr.substring(2, 4), 16),
                 Integer.valueOf(colorStr.substring(4, 6), 16),
                 Integer.valueOf(colorStr.substring(6, 8), 16));
+
     }
 
     private int getFacesAmount() {

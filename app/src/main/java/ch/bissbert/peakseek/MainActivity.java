@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import ch.bissbert.peakseek.dao.LocationFetcher;
 import ch.bissbert.peakseek.graphics.objects.SeekManager;
 import ch.bissbert.peakseek.graphics.objects.SphereManager;
+import ch.bissbert.peakseek.graphics.rotation.Orientation;
 
 /**
  * Main activity containing the find screen as well as the button to switch to the settings menu
@@ -35,22 +36,15 @@ import ch.bissbert.peakseek.graphics.objects.SphereManager;
  * @author Bissbert, BeeTheKay
  * @see SettingsActivity
  */
-public class MainActivity extends AppCompatActivity implements LifecycleOwner {
-
-    private SeekManager seekManager;
+public class MainActivity extends AppCompatActivity implements LifecycleOwner, Orientation.Listener {
 
     private static boolean run = false;
-    // Used to handle pause and resume...
-    private static MainActivity master = null;
-
-    private CameraManager cameraManager;
     private final int REQUEST_CODE_PERMISSIONS = 1001;
     private final String[] permissions = {android.Manifest.permission.CAMERA, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
     private SphereManager sphereManager;
     private LocationManager locationManager;
     private boolean firstTriggerHappened;
-
 
     public MainActivity() {
         super();
@@ -62,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
      * Loads the data from the database if first time open or else asks if to load when new data is available
      */
     public void runOnce() {
+
         if (!run) {
             Log.i(getString(R.string.LOAD_TAG), "starting app");
             Log.i(getString(R.string.LOAD_TAG), "query if network is available");
@@ -148,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
      */
     private void loadSeekScreen() {
         GLSurfaceView surfaceView = findViewById(R.id.peakSeekGLView);
-        seekManager = new SeekManager(getResources(), surfaceView);
+        seekManager = new SeekManager(getResources(), surfaceView, this);
         seekManager.loadSeekScreen();
     }
 
@@ -190,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
     protected void onPause() {
         super.onPause();
         seekManager.onPause();
-        //cameraManager.onPause();
     }
 
     /**
@@ -201,7 +195,11 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
         super.onResume();
         if (seekManager == null) loadSeekScreen();
         seekManager.onResume();
-        //cameraManager.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     /**
@@ -211,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
      * @return a boolean whether succeeded
      */
     public boolean onTouchEvent(MotionEvent me) {
-        return seekManager.onTouchEvent(me) || super.onTouchEvent(me);
+        return super.onTouchEvent(me);
     }
 
     /**
@@ -222,5 +220,10 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
     public void openSettingsMenu(View view) {
         Intent setting = new Intent(this, SettingsActivity.class);
         startActivity(setting);
+    }
+
+    @Override
+    public void onOrientationChanged(float yaw, float pitch) {
+        seekManager.onOrientationChanged(yaw, pitch);
     }
 }

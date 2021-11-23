@@ -258,6 +258,8 @@ public class LocationFetcher extends AsyncTask<String, Void, String> {
         builder.setCancelable(false);
         builder.setTitle(resources.getText(R.string.LOAD_TITLE));
 
+        Looper.prepare();
+
         dialog = builder.create();
         dialog.show();
         return dialog.findViewById(R.id.loader);
