@@ -1,7 +1,6 @@
 package ch.bissbert.peakseek.activities;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,7 +30,6 @@ import ch.bissbert.peakseek.R;
 import ch.bissbert.peakseek.dao.LocationFetcher;
 import ch.bissbert.peakseek.graphics.objects.SeekManager;
 import ch.bissbert.peakseek.graphics.objects.SphereManager;
-import ch.bissbert.peakseek.graphics.rotation.Orientation;
 
 /**
  * Main activity containing the find screen as well as the button to switch to the settings menu
@@ -39,7 +37,7 @@ import ch.bissbert.peakseek.graphics.rotation.Orientation;
  * @author Bissbert, BeeTheKay
  * @see SettingsActivity
  */
-public class MainActivity extends AppCompatActivity implements LifecycleOwner, Orientation.Listener {
+public class MainActivity extends AppCompatActivity implements LifecycleOwner {
 
     private static boolean run = false;
     private final int REQUEST_CODE_PERMISSIONS = 1001;
@@ -47,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, O
 
     private SphereManager sphereManager;
     private LocationManager locationManager;
-    private boolean firstTriggerHappened;
     private SeekManager seekManager;
     private CameraManager cameraManager;
 
@@ -153,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, O
      */
     private void loadSeekScreen() {
         GLSurfaceView surfaceView = findViewById(R.id.peakSeekGLView);
-        seekManager = new SeekManager(getResources(), surfaceView, this);
+        seekManager = new SeekManager(surfaceView, this);
         seekManager.loadSeekScreen();
     }
 
@@ -234,8 +231,5 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, O
         startActivity(setting);
     }
 
-    @Override
-    public void onOrientationChanged(float yaw, float pitch) {
-        seekManager.onOrientationChanged(yaw, pitch);
-    }
+
 }

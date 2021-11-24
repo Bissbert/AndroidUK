@@ -1,6 +1,5 @@
 package ch.bissbert.peakseek.graphics.objects;
 
-import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 
@@ -12,38 +11,39 @@ import com.threed.jpct.SimpleVector;
 import com.threed.jpct.World;
 import com.threed.jpct.util.MemoryHelper;
 
-import java.util.List;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import ch.bissbert.peakseek.activities.MainActivity;
 import ch.bissbert.peakseek.graphics.rotation.ViewRotation;
 
+/**
+ * Manages the {@link GLSurfaceView} to display in the {@link MainActivity}
+ *
+ * @author Bastian
+ */
 public class SeekManager {
 
     public static boolean reloadColor;
-    private final Resources resources;
     private final GLSurfaceView mGLView;
     private final MainActivity activity;
-    private final RGBColor BACKGROUND_COLOR = new RGBColor(0,0,0,0);
-    private MyRenderer renderer;
-    private FrameBuffer fb = null;
+    private final RGBColor BACKGROUND_COLOR = new RGBColor(0, 0, 0, 0);
+    private FrameBuffer frameBuffer = null;
     private World world = null;
-    private int fps = 0;
 
     private ViewRotation viewRotation;
-    private Light sun;
-    private Camera cam;
 
-    public SeekManager(Resources resources, GLSurfaceView mGLView, MainActivity activity) {
-        this.resources = resources;
+    /**
+     * @param mGLView  to manage
+     * @param activity to give to {@link ViewRotation}
+     */
+    public SeekManager(GLSurfaceView mGLView, MainActivity activity) {
         this.mGLView = mGLView;
         this.activity = activity;
     }
 
     /**
-     * loads the seek screen onto the GLSurface view from the main screen
+     * Loads the seek screen onto the {@link GLSurfaceView}
      */
     public void loadSeekScreen() {
         mGLView.setZOrderOnTop(true);
@@ -55,24 +55,23 @@ public class SeekManager {
         world = new World();
         world.setAmbientLight(20, 20, 20);
 
-        sun = new Light(world);
+        Light sun = new Light(world);
         sun.setIntensity(250, 250, 250);
 
-        cam = world.getCamera();
+        Camera cam = world.getCamera();
         cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
-        //cam.lookAt(sphere.getTransformedCenter());
 
-        SimpleVector sv = new SimpleVector(0,-20,0);
+        SimpleVector sv = new SimpleVector(0, 0, 0);
         sun.setPosition(sv);
 
-        renderer = new MyRenderer();
+        MyRenderer renderer = new MyRenderer();
         mGLView.setRenderer(renderer);
 
         onResume();
     }
 
     /**
-     * pauses the GLView
+     * Pauses the {@link GLSurfaceView}
      */
     public void onPause() {
         mGLView.onPause();
@@ -80,7 +79,7 @@ public class SeekManager {
     }
 
     /**
-     * resumes the GLView
+     * Resumes the {@link GLSurfaceView}
      */
     public void onResume() {
         mGLView.onResume();
@@ -88,62 +87,66 @@ public class SeekManager {
         viewRotation.onResume();
     }
 
-    public void onOrientationChanged(float yaw, float pitch) {
-        viewRotation.onOrientationChanged(yaw, pitch);
-    }
-
-    public void setSpheres(List<Sphere> spheres) {
-        if (world == null) return;
-        Sphere[] sphereArray = new Sphere[spheres.size()];
-        spheres.toArray(sphereArray);
-        world.removeAllObjects();
-        System.out.println("Spheres: " + spheres.toString());
-        world.addObjects(sphereArray);
-    }
-
+    /**
+     * Removes all objects from the {@link World}
+     */
     public void clearScreen() {
         if (world == null) return;
         world.removeAllObjects();
     }
 
+    /**
+     * Adds a {@link Sphere} to be displayed
+     *
+     * @param sphere to add to the {@link World}
+     */
     public void addSphere(Sphere sphere) {
         if (world == null) return;
         world.addObject(sphere);
     }
 
+    /**
+     * Renders the 3D space
+     */
     class MyRenderer implements GLSurfaceView.Renderer {
-
-        private long time = System.currentTimeMillis();
 
         public MyRenderer() { }
 
-        public void onSurfaceChanged(GL10 gl, int w, int h) {
-            if (fb != null) fb.dispose();
+        /**
+         * Gets called after the Surface is created or the size was changed
+         *
+         * @param gl     interface
+         * @param width  of the surface
+         * @param height of the surface
+         */
+        public void onSurfaceChanged(GL10 gl, int width, int height) {
+            if (frameBuffer != null) frameBuffer.dispose();
 
-            fb = new FrameBuffer(gl, w, h);
+            frameBuffer = new FrameBuffer(gl, width, height);
 
             viewRotation.set(world.getCamera(), activity);
-            //viewRotation.moveCamera(Camera.CAMERA_MOVEOUT, 50);
+
 
             MemoryHelper.compact();
         }
 
+        /**
+         * From {@link GLSurfaceView.Renderer}, not used here
+         */
         public void onSurfaceCreated(GL10 gl, EGLConfig config) { }
 
+        /**
+         * Gets called repeatedly to draw the frame
+         *
+         * @param gl interface
+         */
         public void onDrawFrame(GL10 gl) {
-            fb.clear(BACKGROUND_COLOR);
-            if (fb != null) {
-                world.renderScene(fb);
-                world.draw(fb);
-                fb.display();
+            frameBuffer.clear(BACKGROUND_COLOR);
+            if (frameBuffer != null) {
+                world.renderScene(frameBuffer);
+                world.draw(frameBuffer);
+                frameBuffer.display();
             }
-/*
-            if (System.currentTimeMillis() - time >= 1000) {
-                Log.i("fps", fps + "");
-                fps = 0;
-                time = System.currentTimeMillis();
-            }
-            fps++;*/
         }
     }
 }
