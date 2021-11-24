@@ -70,7 +70,7 @@ public class ViewRotation implements Orientation.OrientationListener {
      */
     public void onResume() {
         if (orientation == null) orientation = new Orientation(activity);
-        orientation.startListening(activity);
+        orientation.startListening(this);
     }
 
     /**

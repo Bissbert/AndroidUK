@@ -39,7 +39,6 @@ public class Sphere extends Object3D {
     public Sphere(float x, float y, float z, Point point, Resources resources, Context context) {
         super(Primitives.getSphere(resources.getInteger(R.integer.amount_of_faces), resources.getInteger(R.integer.size_of_sphere) / resources.getInteger(R.integer.RENDER_SCALE)));
         this.point = point;
-        this.resources = resources;
         this.context = context;
         setTexture();
 
